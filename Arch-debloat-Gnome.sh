@@ -9,3 +9,4 @@
   sudo pacman -Rs gnome-contacts
   sudo pacman -Rs baobab
   sudo pacman -Rs showtime
+  sudo pacman -Rs gnome-characters
