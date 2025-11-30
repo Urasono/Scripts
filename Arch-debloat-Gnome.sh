@@ -12,3 +12,4 @@
   sudo pacman -Rs gnome-characters
   sudo pacman -Rs malcontent
   sudo pacman -Rs papers
+  sudo pacman -Rs vim
