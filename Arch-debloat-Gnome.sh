@@ -10,3 +10,4 @@
   sudo pacman -Rs baobab
   sudo pacman -Rs showtime
   sudo pacman -Rs gnome-characters
+  sudo pacman -Rs malcontent
