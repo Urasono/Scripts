@@ -8,3 +8,4 @@
   sudo pacman -Rs htop
   sudo pacman -Rs gnome-contacts
   sudo pacman -Rs baobab
+  sudo pacman -Rs showtime
