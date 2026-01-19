@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash  
  #Apps to install Script
  # System Update
  sudo apt update
