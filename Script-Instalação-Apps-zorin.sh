@@ -1,48 +1,41 @@
-    #!/bin/bash
+ #!/bin/bash
+ #Apps to install Script
+ # System Update
+ sudo apt update
+ #apps
+ sudo apt install -y ncdu
+ sudo apt install -y keepassxc
+ sudo apt install -y mpv
+ sudo apt install -y kdeconnect
+ sudo apt install -y neofetch
+ sudo apt install -y qbittorrent
 
-    #Apps to install Script
+ #Flatpak Update
 
-    # System Update
-    sudo apt update
+ #Flatpak Apps
+ ## Tor Browser
+ flatpak install flathub org.torproject.torbrowser-launcher -y
+ ## Onlyoffice
+ flatpak install flathub org.onlyoffice.desktopeditors
 
-    #apps
-    sudo apt install -y ncdu
-    sudo apt install -y keepassxc
-    sudo apt install -y mpv
-    sudo apt install -y kdeconnect
-    sudo apt install -y neofetch
-    sudo apt install -y qbittorrent
+ # Flatpak Clean Up
+ flatpak uninstall --delete-data -y
+ flatpak uninstall --unused -y
 
-    #Flatpak Update
+ # Snap Update
+ sudo snap refresh
 
-    #Flatpak Apps
-    ## Tor Browser
-    flatpak install flathub org.torproject.torbrowser-launcher -y
-    ## Onlyoffice
-    flatpak install flathub org.onlyoffice.desktopeditors
+ # Snap Clean Up
+ sudo rm -rf /var/lib/snapd/cache/*
 
-    # Flatpak Clean Up
-    flatpak uninstall --delete-data -y
-    flatpak uninstall --unused -y
+ #System Update and Upgrade
+ sudo apt update
+ sudo apt install --fix-missing -y
 
-    # Snap Update
-    sudo snap refresh
+ #System Clean
+ sudo apt install -f
+ sudo apt autoremove -y
+ sudo apt autoclean
+ sudo apt clean
 
-    # Snap Clean Up
-    sudo rm -rf /var/lib/snapd/cache/*
-
-    #System Update and Upgrade
-    sudo apt update
-    sudo apt install --fix-missing -y
-
-    #System Clean
-    sudo apt install -f
-    sudo apt autoremove -y
-    sudo apt autoclean
-    sudo apt clean
-
-    #End
-
-    #Display installation complete Message
-    echo "All done!!"
-    echo "Restart, please."
+  #End
