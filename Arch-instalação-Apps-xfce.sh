@@ -15,6 +15,9 @@
   #update
   sudo pacman -Sy
 
+  #remoção da mitigação split-lock
+  sudo rm -r /etc/sysctl.d/99-splitlock.conf
+
   #install packages
   sudo pscman -S nano -y
   sudo pacman -S fastfetch -y
