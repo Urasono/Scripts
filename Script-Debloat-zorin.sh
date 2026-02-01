@@ -4,7 +4,6 @@
 
      #uninstall Bloatware Apps
 
-     sudo apt --purge remove -y libreoffice*
      sudo apt --purge remove -y gnome-weather
      sudo apt --purge remove -y simple-scan
      sudo apt --purge remove -y brasero
