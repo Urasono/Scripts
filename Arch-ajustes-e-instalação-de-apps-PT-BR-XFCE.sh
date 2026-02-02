@@ -29,7 +29,6 @@
   systemctl restart earlyoom
 
   #shader booster
-
   echo "# enforce RADV vulkan implementation for AMD GPUs
 export AMD_VULKAN_ICD=RADV
 
@@ -47,6 +46,8 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" > .profile
   wget "https://openrgb.org/releases/release_0.9/openrgb-udev-install.sh"
   chmod +x openrgb-udev-install.sh
   bash openrgb-udev-install.sh
+  #sudo pacman -S flatpak -y
+  #sudo pacman -S flatseal -y
 
   #install packages
   sudo pacman -S linux-headers -s
@@ -88,12 +89,11 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" > .profile
   sudo pacman -S xfce4 -s
   sudo pacman -S xfce4-goodies -s
   sudo pacman -S cmus -s
-  startxfce4
 
   #yay AUR
   git clone "https://aur.archlinux.org/yay-bin.git"
   cd yay-bin
   makepkg -si
 
-#end
-echo "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf"
+  #end
+  echo "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf | Reinicie o sistema, amigão"
