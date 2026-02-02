@@ -1,4 +1,4 @@
-#!/bash/bin
+#!/bin/bash
 
   #check updates
   sudo pacman -Sy
