@@ -54,6 +54,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" > .profile
   #install packages
   sudo pacman -S linux-headers -y
   sudo pscman -S nano -y
+  sudo pacman -S bitwarden -y
   sudo pacman -S fastfetch -y
   sudo pacman -S gdu -y
   sudo pacman -S keepassxc -y
