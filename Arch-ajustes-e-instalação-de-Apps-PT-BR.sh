@@ -43,7 +43,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" > .profile
   #sudo pacman -S davinci-resolve -s
   wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage"
   mkdir Openrgb
-  mv *AppImage Openrgb/
+  mv ./*AppImage Openrgb/
   cd Openrgb/ || exit
   wget "https://openrgb.org/releases/release_0.9/openrgb-udev-install.sh"
   chmod +x openrgb-udev-install.sh
