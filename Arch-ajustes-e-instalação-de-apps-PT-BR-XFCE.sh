@@ -48,6 +48,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" > .profile
   bash openrgb-udev-install.sh
   #sudo pacman -S flatpak -y
   #sudo pacman -S flatseal -y
+  #flatpak update
 
   #install packages
   sudo pacman -S linux-headers -s
