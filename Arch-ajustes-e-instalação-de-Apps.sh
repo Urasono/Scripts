@@ -44,7 +44,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" > .profile
   wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage"
   mkdir Openrgb
   mv *AppImage Openrgb/
-  cd Openrgb/
+  'cd Openrgb/
   wget "https://openrgb.org/releases/release_0.9/openrgb-udev-install.sh"
   chmod +x openrgb-udev-install.sh
   bash openrgb-udev-install.sh
@@ -94,7 +94,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" > .profile
 
   #yay AUR
   git clone "https://aur.archlinux.org/yay-bin.git"
-  cd yay-bin
+  'cd yay-bin
   makepkg -si
 
   #end
