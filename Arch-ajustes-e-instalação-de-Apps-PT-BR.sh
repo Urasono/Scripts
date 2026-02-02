@@ -29,7 +29,6 @@
   systemctl restart earlyoom
 
   #shader booster
-
   echo "# enforce RADV vulkan implementation for AMD GPUs
 export AMD_VULKAN_ICD=RADV
 
@@ -38,7 +37,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" > .profile
 
   #increase NVIDEA cache size to 12GB
   #echo "# increase Nvidia shader cache size to 12GB
-#export __GL_SHADER_DISK_CACHE_SIZE=12000000000" >.profile
+#export __GL_SHADER_DISK_CACHE_SIZE=12000000000" > .profile
 
   #optional apps#
   #sudo pacman -S davinci-resolve -s
@@ -49,6 +48,8 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" > .profile
   wget "https://openrgb.org/releases/release_0.9/openrgb-udev-install.sh"
   chmod +x openrgb-udev-install.sh
   bash openrgb-udev-install.sh
+  #sudo pacman -S flatpak -y
+  #sudo pacman -S flatseal -y
 
   #install packages
   sudo pacman -S linux-headers -s
@@ -94,5 +95,5 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" > .profile
   cd yay-bin
   makepkg -si
 
-#end
-echo "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf. Se deu alguma merda, volte e resolva"
+  #end
+  echo "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf. Se deu alguma merda, volte e resolva | Reinicie o sistema, amigão"
