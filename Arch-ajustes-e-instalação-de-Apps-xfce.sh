@@ -53,7 +53,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
   mv ./*download Ventoy/ || exit
   cd Ventoy/ || exit
   tar -xvf download || exit
-  rm download || exit
+  rm ./*download || exit
   cd ../ || exit
 
   #sudo pacman -S flatpak -y
