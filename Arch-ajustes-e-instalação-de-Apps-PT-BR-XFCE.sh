@@ -37,9 +37,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 
   # increase NVIDEA cache size to 12GB
   #echo "# increase Nvidia shader cache size to 12GB
-#export __GL_SHADER_DISK_CACHE_SIZE=12000000000" >> .profile                                                                                                                #optional apps#
-  #sudo pacman -S davinci-resolve -y
-  wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage"
+#export __GL_SHADER_DISK_CACHE_SIZE=12000000000" >> .profile
   mkdir Openrgb || exit
   mv ./*AppImage Openrgb/ || exit
   cd Openrgb/ || exit
@@ -54,9 +52,10 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
   tar -xvf * || exit
   rm ./*download || exit
   cd ../ || exit
-  #sudo pacman -S flatpak -y
-  #sudo pacman -S flatseal -y
+  #sudo pacman -S flatpak -s
+  #sudo pacman -S flatseal -s
   #flatpak update
+  #sudo pacman -S davinci-resolve -s
 
   #install packages
   sudo pacman -S linux-headers -s
