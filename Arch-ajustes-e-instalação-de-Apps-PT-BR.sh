@@ -1,8 +1,8 @@
 #!/bin/bash
-#Instalação de aplicativos e alguns ajustes com base no sistema em Português.
+#Arch-ajustes-e-instalação-de-Apps-PT-BR - Instalação de aplicativos e alguns ajustes com base no sistema em Português.
 
 #check updates
-sudo pacman -Sy -s
+sudo pacman -Sy
 sudo pacman -Syu
 
 #grub-config microcódigo
