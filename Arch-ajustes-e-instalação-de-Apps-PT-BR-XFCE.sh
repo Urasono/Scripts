@@ -1,5 +1,5 @@
 #!/bin/bash
-#Ajustes no Arch linux e instalação de aplicativos com base no sistema em Português e buscando a instalação da interface gráfica XFCE.
+#Arch-ajustes-e-instalação-de-Apps-PT-BR-XFCE - Ajustes no Arch linux e instalação de aplicativos com base no sistema em Português e buscando a instalação da interface gráfica XFCE.
 
 #check updates
 sudo pacman -Sy -s
