@@ -41,6 +41,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 #export __GL_SHADER_DISK_CACHE_SIZE=12000000000" >> .profile
 
 #optional apps#
+
 #sudo pacman -S davinci-resolve -s
 wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage"
 mkdir Openrgb || exit
@@ -57,7 +58,6 @@ cd Ventoy/ || exit
 tar -xvf ./*download || exit
 rm ./*download || exit
 cd ../ || exit
-
 #sudo pacman -S flatpak -s
 #sudo pacman -S flatseal -s
 #flatpak update
