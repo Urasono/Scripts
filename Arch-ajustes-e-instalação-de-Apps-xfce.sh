@@ -1,5 +1,5 @@
 #!/bin/bash
-#Ajustes e instalações de aplicativos no Arch linux, porém, com base no sistema em Inglês focando no uso com o XFCE.
+#Ajustes e instalação de Apps xfce - Ajustes e instalações de aplicativos no Arch linux, porém, com base no sistema em Inglês focando no uso com o XFCE.
 
 #check updates
 sudo pacman -Sy
