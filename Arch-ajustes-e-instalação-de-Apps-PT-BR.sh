@@ -6,7 +6,7 @@
 
   #grub-config microcódigo
   sudo pacman -S amd-ucode -s
-  #sudo grub-mkconfig -o /boot/grub/grub.cfg
+  #grub-mkconfig -o /boot/grub/grub.cfg
 
   #set keyboard
   setxkbmap -model abnt2 -layout br
