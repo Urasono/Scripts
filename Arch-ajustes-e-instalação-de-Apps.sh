@@ -1,5 +1,5 @@
 #!/bin/bash
-#Instalação e ajustes no Arch linux com base no sistema em inglês.
+#Ajustes e instalação de Apps - Instalação e ajustes no Arch linux com base no sistema em inglês.
 
 #check updates
 sudo pacman -Sy
