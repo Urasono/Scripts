@@ -97,7 +97,7 @@ sudo pacman -S nfoview -s
 sudo pacman -S foliate -s
 sudo pacman -S speedtest-cli -s
 sudo pacman -S aria2 -s
-sudo pacman -S thunderbird -s
+sudo pacman -S claws-mail -s
 sudo pacman -S freecad -s
 sudo pacman -S timeshift -s
 sudo pacman -S xfce4 -s
