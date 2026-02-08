@@ -100,7 +100,7 @@ sudo pacman -S nfoview -y
 sudo pacman -S foliate -y
 sudo pacman -S speedtest-cli -y
 sudo pacman -S aria2 -y
-sudo pacman -S thunderbird -y
+sudo pacman -S claws-mail -y
 sudo pacman -S freecad -y
 sudo pacman -S timeshift -y
 sudo pacman -S cmus -y
