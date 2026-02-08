@@ -28,10 +28,8 @@
 
      #system disable unit-files
      sudo systemctl disable cups.service
-     sudo systemctl disable cups.path
-     sudo systemctl disable cups.socket
 
-     #System clean Up
+    #System clean Up
      sudo apt install -f
      sudo apt autoremove --purge -y
      sudo apt autoclean
