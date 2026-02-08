@@ -7,6 +7,8 @@ sudo pacman -Syu
 
 #grub-config microcódigo
 sudo pacman -S amd-ucode -s
+
+#modo root
 #grub-mkconfig -o /boot/grub/grub.cfg
 
 #set keyboard
