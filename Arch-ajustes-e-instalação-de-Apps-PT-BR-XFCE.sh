@@ -3,21 +3,21 @@
 
 #check updates
 sudo pacman -Sy
-sudo pacman -Syu
+sudo pacman -Syu || exit
 
 #grub-config microcódigo
-sudo pacman -S amd-ucode -s
+sudo pacman -S amd-ucode -s || exit
 
 #modo root
 #grub-mkconfig -o /boot/grub/grub.cfg
 
 #set keyboard
-setxkbmap -model abnt2 -layout br
-loadkeys br-abnt2
+setxkbmap -model abnt2 -layout br || exit
+loadkeys br-abnt2 || exit
 
 #pacman-contrib (empty cache weekly)
-sudo pacman -S  pacman-contrib -s
-systemctl enable --now paccache.timer
+sudo pacman -S  pacman-contrib -s || exit
+systemctl enable --now paccache.timer || exit
 
 #update
 sudo pacman -Sy
@@ -26,7 +26,7 @@ sudo pacman -Sy
 sudo rm -r /etc/sysctl.d/99-splitlock.conf
 
 #Earlyoom Daemon Linux
-sudo pacman -S earlyoom -s
+sudo pacman -S earlyoom -s || exit
 sudo systemctl enable --now earlyoom
 #sudo echo ""EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$" > /etc/default/earlyoom
 systemctl restart earlyoom
