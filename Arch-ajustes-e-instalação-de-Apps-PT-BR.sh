@@ -88,7 +88,7 @@ sudo pacman -S winetricks -s
 sudo pacman -S steam -s
 sudo pacman -S lutris -s
 sudo pacman -S libreoffice-still -s
-sudo pacman -S xorg --needed -s
+sudo pacman -S xorg -s
 sudo pacman -S mesa -s
 sudo pacman -S lib32-mesa -s
 sudo pacman -S xdg-users-dirs -s
