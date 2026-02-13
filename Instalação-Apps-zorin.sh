@@ -1,7 +1,9 @@
 #!/bin/bash  
  #Apps to install Script
+ 
  # System Update
  sudo apt update
+ 
  #apps
  sudo apt install -y ncdu
  sudo apt install -y keepassxc
