@@ -94,7 +94,7 @@ sudo pacman -S mesa -y
 sudo pacman -S lib32-mesa -y
 sudo pacman -S xdg-users-dirs -y
 sudo pacman -S flameshot -y
-sudo pacman -S nfoview -y
+sudo pacman -S tldr -y
 sudo pacman -S foliate -y
 sudo pacman -S speedtest-cli -y
 sudo pacman -S aria2 -y
