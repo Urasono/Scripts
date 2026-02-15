@@ -91,7 +91,6 @@ udo pacman -S mesa -s
 sudo pacman -S lib32-mesa -s
 sudo pacman -S xdg-users-dirs -s
 sudo pacman -S flameshot -s
-sudo pacman -S nfoview -s
 sudo pacman -S foliate -s
 sudo pacman -S speedtest-cli -s
 sudo pacman -S aria2 -s
@@ -101,6 +100,7 @@ sudo pacman -S timeshift -s
 sudo pacman -S xfce4 -s
 sudo pacman -S xfce4-goodies -s
 sudo pacman -S cmus -s
+sudo pacman -S tldr -s
 
 #yay AUR
 git clone "https://aur.archlinux.org/yay-bin.git"
