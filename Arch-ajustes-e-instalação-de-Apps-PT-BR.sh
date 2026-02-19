@@ -4,6 +4,8 @@
 #check updates
 sudo pacman -Sy
 sudo pacman -Syu
+pacman-key --refresh-keys
+sudo pacman -Syu archlinux-keyring
 
 #grub-config microcódigo
 sudo pacman -S amd-ucode -s
@@ -17,19 +19,22 @@ loadkeys br-abnt2
 
 #pacman-contrib (empty cache weekly)
 sudo pacman -S  pacman-contrib -s
-systemctl enable --now paccache.timer
+systemctl enable paccache.timer
+systemctl start paccache. timer
 
 #update
 sudo pacman -Sy
 
 #remoção da mitigação split-lock
-sudo rm -r /etc/sysctl.d/99-splitlock.conf
+#sudo rm -r /etc/sysctl.d/99-splitlock.conf
 
 #Earlyoom Daemon Linux
 sudo pacman -S earlyoom -s
-sudo systemctl enable --now earlyoom
+sudo systemctl enable earlyoom
+sudo systemctl start earlyoom
+
 #sudo echo ""EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$" > /etc/default/earlyoom
-systemctl restart earlyoom
+sudo systemctl restart earlyoom
 
 #shader booster
 echo "# enforce RADV vulkan implementation for AMD GPUs
