@@ -18,7 +18,7 @@ setxkbmap -model abnt2 -layout br
 loadkeys br-abnt2
 
 #pacman-contrib (empty cache weekly)
-sudo pacman -S  pacman-contrib -s
+sudo pacman -S pacman-contrib -s
 systemctl enable paccache.timer
 systemctl start paccache.timer
 
