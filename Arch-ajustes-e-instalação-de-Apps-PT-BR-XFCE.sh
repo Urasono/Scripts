@@ -5,7 +5,7 @@
 sudo pacman -Sy
 sudo pacman -Syu
 pacman-key --refresh-keys
-pacman -Syu archlinux-keyring
+sudo pacman -Syu archlinux-keyring
 
 #grub-config microcódigo
 sudo pacman -S amd-ucode -s
@@ -93,7 +93,7 @@ sudo pacman -S libreoffice-still -s
 sudo pacman -S xorg -s
 sudo pacman -S xorg-apps -s
 sudo pacman -S xorg-server -s
-udo pacman -S mesa -s
+sudo pacman -S mesa -s
 sudo pacman -S lib32-mesa -s
 sudo pacman -S xdg-users-dirs -s
 sudo pacman -S flameshot -s
