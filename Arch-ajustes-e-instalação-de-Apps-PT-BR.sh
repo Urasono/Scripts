@@ -20,7 +20,7 @@ loadkeys br-abnt2
 #pacman-contrib (empty cache weekly)
 sudo pacman -S  pacman-contrib -s
 systemctl enable paccache.timer
-systemctl start paccache. timer
+systemctl start paccache.timer
 
 #update
 sudo pacman -Sy
