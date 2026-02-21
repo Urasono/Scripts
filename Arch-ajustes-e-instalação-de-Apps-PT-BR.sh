@@ -46,18 +46,18 @@ export AMD_VULKAN_ICD=RADV
   # increase AMD and Intel cache size to 12GB
 export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 
-#increase NVIDEA cache size to 12GB
+#increase NVIDIA cache size to 12GB
 #echo "# increase Nvidia shader cache size to 12GB
 #export __GL_SHADER_DISK_CACHE_SIZE=12000000000" >> .profile
 
-#NVIDEA Drivers (Open source)
+#NVIDIA Drivers (Open source)
 #pacman -S nvidia-open-dkms nvidia-utils nvidia-settings -s
+
 #Proprietário
-#pacman -S nvidia-dkms -s
+#pacman -S nvidia-dkms nvidia-utils nvidia-settings -s
 #mkinitcpio -P || exit
 
 #optional apps#
-
 #pacman -S davinci-resolve -s
 #wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage"
 #mkdir Openrgb || exit
