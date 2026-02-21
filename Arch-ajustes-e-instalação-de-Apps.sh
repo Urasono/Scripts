@@ -74,45 +74,47 @@ cd ../ || exit
 #flatpak update
 
 #install packages
- pacman -S linux-headers -y
- pacman -S nano -y
- pacman -S bitwarden -y
- pacman -S fastfetch -y
- pacman -S gdu -y
- pacman -S keepassxc -y
- pacman -S firefox -y
- pacman -S mpv -y
- pacman -S btop -y
- pacman -S gstreamer -y
- pacman -S gst-plugins-bad -y
- pacman -S gst-plugins-good -y
- pacman -S gst-plugins-base -y
- pacman -S gst-libav -y
- pacman -S gst-plugins-ugly -y
- pacman -S ffmpeg -y
- pacman -S base-devel -y
- pacman -S gufw -y
- pacman -S wine -y
- pacman -S winetricks -y
- pacman -S steam -y
- pacman -S lutris -y
- pacman -S libreoffice-still -y
- pacman -S --needed xorg -y
- pacman -S mesa -y
- pacman -S lib32-mesa -y
- pacman -S xdg-users-dirs -y
- pacman -S flameshot -y
- pacman -S tldr -y
- pacman -S foliate -y
- pacman -S speedtest-cli -y
- pacman -S aria2 -y
- pacman -S claws-mail -y
- pacman -S freecad -y
- pacman -S timeshift -y
- pacman -S cmus -y
+pacman -S linux-headers -y
+pacman -S nano -y
+pacman -S bitwarden -y
+pacman -S fastfetch -y
+pacman -S gdu -y
+pacman -S keepassxc -y
+pacman -S firefox -y
+pacman -S mpv -y
+pacman -S btop -y
+pacman -S gstreamer -y
+pacman -S gst-plugins-bad -y
+pacman -S gst-plugins-good -y
+pacman -S gst-plugins-base -y
+pacman -S gst-libav -y
+pacman -S gst-plugins-ugly -y
+pacman -S ffmpeg -y
+pacman -S base-devel -y
+pacman -S gufw -y
+pacman -S wine -y
+pacman -S winetricks -y
+pacman -S steam -y
+pacman -S lutris -y
+pacman -S libreoffice-still -y
+pacman -S --needed xorg -y
+pacman -S mesa -y
+pacman -S lib32-mesa -y
+pacman -S xdg-users-dirs -y
+pacman -S flameshot -y
+pacman -S tldr -y
+pacman -S foliate -y
+pacman -S speedtest-cli -y
+pacman -S aria2 -y
+pacman -S claws-mail -y
+pacman -S freecad -y
+pacman -S timeshift -y
+pacman -S cmus -y
+#pacman -S --needed bash systemd pacman pacman-contrib archlinux-contrib curl fakeroot htmlq diffutils hicolor-icon-theme python python-pyqt6 qt6-svg glib2 xdg-utils
 
 #yay AUR
 git clone "https://aur.archlinux.org/yay-bin.git"
+git clone "https://aur.archlinux.org/arch-update.git"
 
 #end
 echo "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf | Reinicie o sistema, amigão"
