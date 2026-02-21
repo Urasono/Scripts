@@ -48,6 +48,10 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 #echo "# increase Nvidia shader cache size to 12GB
 #export __GL_SHADER_DISK_CACHE_SIZE=12000000000" >> .profile
 
+#NVIDEA Drivers
+#pacman -S nvidia-open-dkms nvidia-utils nvidia-settings -s
+#mkinitcpio -P || exit
+
 #instalações de aplicativos extras
 mkdir Openrgb || exit
 mv ./*AppImage Openrgb/ || exit
