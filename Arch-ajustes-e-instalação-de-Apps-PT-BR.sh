@@ -111,9 +111,11 @@ pacman -S claws-mail -s
 pacman -S freecad -s
 pacman -S timeshift -s
 pacman -S cmus -s
+#pacman -S --needed bash systemd pacman pacman-contrib archlinux-contrib curl fakeroot htmlq diffutils hicolor-icon-theme python python-pyqt6 qt6-svg glib2 xdg-utils
 
 #yay AUR
 git clone "https://aur.archlinux.org/yay-bin.git"
+git clone "https://aur.archlinux.org/arch-update.git"
 
 #end
 echo "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf. Se deu alguma merda, volte e resolva | Reinicie o sistema, amigão"
