@@ -115,7 +115,7 @@ pacman -S cmus -s
 
 #yay AUR
 git clone "https://aur.archlinux.org/yay-bin.git"
-git clone "https://aur.archlinux.org/arch-update.git"
+#git clone "https://aur.archlinux.org/arch-update.git"
 
 #end
 echo "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf. Se deu alguma merda, volte e resolva | Reinicie o sistema, amigão"
