@@ -57,7 +57,6 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 #pacman -S nvidia-dkms nvidia-utils nvidia-settings -y
 
 #optional apps#
-
 #pacman -S davinci-resolve -y
 #wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage"
 #mkdir Openrgb || exit
