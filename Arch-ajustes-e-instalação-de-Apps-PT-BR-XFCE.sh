@@ -53,13 +53,13 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 #mkinitcpio -P || exit
 
 #instalações de aplicativos extras
-mkdir Openrgb || exit
-mv ./*AppImage Openrgb/ || exit
-cd Openrgb/ || exit
-wget "https://openrgb.org/releases/release_0.9/openrgb-udev-install.sh"
-chmod +x openrgb-udev-install.sh
-bash openrgb-udev-install.sh
-cd ../ || exit
+#mkdir Openrgb || exit
+#mv ./*AppImage Openrgb/ || exit
+#cd Openrgb/ || exit
+#wget "https://openrgb.org/releases/release_0.9/openrgb-udev-install.sh"
+#chmod +x openrgb-udev-install.sh
+#bash openrgb-udev-install.sh
+#cd ../ || exit
 wget "https://sourceforge.net/projects/ventoy/files/v1.1.10/ventoy-1.1.10-linux.tar.gz/download"
 mkdir Ventoy || exit
 mv ./*download Ventoy || exit
