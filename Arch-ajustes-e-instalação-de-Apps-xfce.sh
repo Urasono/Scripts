@@ -67,6 +67,8 @@ cd Ventoy/ || exit
 tar -xvf download || exit
 rm ./*download || exit
 cd ../ || exit
+
+#<Flatpak>
 #pacman -S flatpak -y
 #pacman -S flatseal -y
 #flatpak update
