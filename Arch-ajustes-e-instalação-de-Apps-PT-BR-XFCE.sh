@@ -2,7 +2,7 @@
 #Ajustes e instalação de Apps xfce PT BR - Ajustes no Arch linux e instalação de aplicativos com base no sistema em Português e buscando a instalação da interface gráfica XFCE.
 
 #Elevação de usuário ao root (CUIDADO)
-su || exit
+whoami || exit
 
 #check updates
 pacman -Sy
