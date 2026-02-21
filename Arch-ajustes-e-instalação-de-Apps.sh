@@ -30,12 +30,12 @@ systemctl start paccache.timer || exit
 pacman -Sy
 
 #remoção da mitigação split-lock
-echo "kernel.split_lock_mitigate=0" > /etc/sysctl.d/99-splitlock.conf
+echo "kernel.split_lock_mitigate=0" > /etc/sysctl.d/99-splitlock.conf || exit
 
 #Earlyoom Daemon Linux
 pacman -S earlyoom -y
-systemctl enable earlyoom
-systemctl start earlyoom
+systemctl enable earlyoom || exit
+systemctl start earlyoom || exit
 #echo ""EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$" > /etc/default/earlyoom
 #systemctl restart earlyoom
 
