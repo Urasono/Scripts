@@ -1,5 +1,7 @@
 #!/bin/bash
 #Ajustes e instalação de Apps PT BR - Instalação de aplicativos e alguns ajustes com base no sistema em Português.
+
+#Elevação do usuário ao root (CUIDADO)
 su || exit
 
 #check updates
@@ -20,8 +22,8 @@ loadkeys br-abnt2
 
 #pacman-contrib (empty cache weekly)
 pacman -S pacman-contrib -s
-systemctl enable paccache.timer
-systemctl start paccache.timer
+systemctl enable paccache.timer || exit
+systemctl start paccache.timer || exit
 
 #update
 pacman -Sy
@@ -32,10 +34,10 @@ echo "kernel.split_lock_mitigate=0" > /etc/sysctl.d/99-splitlock.conf
 #Earlyoom Daemon Linux
 pacman -S earlyoom -s
 systemctl enable earlyoom || exit
-systemctl start earlyoom || exit
+systemctl start earlyoom  || exit
 
 #echo ""EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$" > /etc/default/earlyoom
-#systemctl restart earlyoom
+#systemctl restart earlyoom || exit
 
 #shader booster
 echo "# enforce RADV vulkan implementation for AMD GPUs
@@ -113,5 +115,5 @@ pacman -S cmus -s
 #yay AUR
 git clone "https://aur.archlinux.org/yay-bin.git"
 
-#End
+#end
 echo "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf. Se deu alguma merda, volte e resolva | Reinicie o sistema, amigão"
