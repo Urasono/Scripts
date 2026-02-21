@@ -46,9 +46,15 @@ export AMD_VULKAN_ICD=RADV
  # increase AMD and Intel cache size to 12GB
 export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 
-# increase NVIDEA cache size to 12GB
+# increase NVIDIA cache size to 12GB
 # echo "# increase Nvidia shader cache size to 12GB
 #export __GL_SHADER_DISK_CACHE_SIZE=12000000000" >> .profile
+
+#NVIDIA Drivers (Open Source)
+#pacman -S nvidia-open-dkms nvidia-utils nvidia-settings -y
+
+#Proprietário
+#pacman -S nvidia-dkms nvidia-utils nvidia-settings -y
 
 #optional apps#
 
