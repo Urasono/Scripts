@@ -97,7 +97,7 @@ cd ../ || exit
  pacman -S steam -y
  pacman -S lutris -y
  pacman -S libreoffice-still -y
- pacman -S xorg -y
+ pacman -S --needed xorg -y
  pacman -S mesa -y
  pacman -S lib32-mesa -y
  pacman -S xdg-users-dirs -y
