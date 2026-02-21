@@ -50,17 +50,21 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 #echo "# increase Nvidia shader cache size to 12GB
 #export __GL_SHADER_DISK_CACHE_SIZE=12000000000" >> .profile
 
+#NVIDEA Drivers
+#pacman -S nvidia-open-dkms nvidia-utils nvidia-settings
+#mkinitcpio -P || exit
+
 #optional apps#
 
 #pacman -S davinci-resolve -s
-wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage"
-mkdir Openrgb || exit
-mv ./*AppImage Openrgb/ || exit
-cd Openrgb/ || exit
-wget "https://openrgb.org/releases/release_0.9/openrgb-udev-install.sh"
-chmod +x openrgb-udev-install.sh
-bash openrgb-udev-install.sh
-cd ../ || exit
+#wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage"
+#mkdir Openrgb || exit
+#mv ./*AppImage Openrgb/ || exit
+#cd Openrgb/ || exit
+#wget "https://openrgb.org/releases/release_0.9/openrgb-udev-install.sh"
+#chmod +x openrgb-udev-install.sh
+#bash openrgb-udev-install.sh
+#cd ../ || exit
 wget "https://sourceforge.net/projects/ventoy/files/v1.1.10/ventoy-1.1.10-linux.tar.gz/download"
 mkdir Ventoy || exit
 mv ./*download Ventoy/ || exit
