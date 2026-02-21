@@ -2,7 +2,7 @@
 #Ajustes e instalação de Apps PT BR - Instalação de aplicativos e alguns ajustes com base no sistema em Português.
 
 #Elevação do usuário ao root (CUIDADO)
-su || exit
+whoami || exit
 
 #check updates
 pacman -Sy
