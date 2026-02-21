@@ -29,7 +29,7 @@ systemctl start paccache.timer || exit
 pacman -Sy
 
 #remoção da mitigação split-lock
-echo "kernel.split_lock_mitigate=0" > /etc/sysctl.d/99-splitlock.conf
+echo "kernel.split_lock_mitigate=0" > /etc/sysctl.d/99-splitlock.conf || exit
 
 #Earlyoom Daemon Linux
 pacman -S earlyoom -y
