@@ -12,7 +12,7 @@ pacman -Syu archlinux-keyring
 pacman -S amd-ucode -s
 
 #Modo root
-grub-mkconfig -o /boot/grub/grub.cfg
+update-grub || exit
 
 #set keyboard
 setxkbmap -model abnt2 -layout br
@@ -31,11 +31,11 @@ echo "kernel.split_lock_mitigate=0" > /etc/sysctl.d/99-splitlock.conf
 
 #Earlyoom Daemon Linux
 pacman -S earlyoom -s
-systemctl enable earlyoom
-systemctl start earlyoom
+systemctl enable earlyoom || exit
+systemctl start earlyoom || exit
 
 #echo ""EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$" > /etc/default/earlyoom
-systemctl restart earlyoom
+#systemctl restart earlyoom
 
 #shader booster
 echo "# enforce RADV vulkan implementation for AMD GPUs
@@ -72,7 +72,7 @@ cd ../ || exit
 
 #install packages
 pacman -S linux-headers -s
-pscman -S nano -s
+pacman -S nano -s
 pacman -S gdu -s
 pacman -S bitwarden -s
 pacman -S fastfetch -s
@@ -87,7 +87,7 @@ pacman -S gst-plugins-good -s
 pacman -S gst-plugins-base -s
 pacman -S gst-plugins-ugly -s
 pacman -S ffmpeg -s
-packan -S base-devel -s
+pacman -S base-devel -s
 pacman -S gufw -s
 pacman -S wine -s
 pacman -S winetricks -s
@@ -112,8 +112,6 @@ pacman -S cmus -s
 
 #yay AUR
 git clone "https://aur.archlinux.org/yay-bin.git"
-cd yay-bin || exit
-#makepkg -si || exit
 
-#end
+#End
 echo "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf. Se deu alguma merda, volte e resolva | Reinicie o sistema, amigão"
