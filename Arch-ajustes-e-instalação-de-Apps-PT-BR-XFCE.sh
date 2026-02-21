@@ -92,9 +92,9 @@ pacman -S winetricks -s
 pacman -S steam -s
 pacman -S lutris -s
 pacman -S libreoffice-still -s
-pacman -S xorg -s
-pacman -S xorg-apps -s
-pacman -S xorg-server -s
+pacman -S --needed xorg -s
+#pacman -S xorg-apps -s
+#pacman -S xorg-server -s
 pacman -S mesa -s
 pacman -S lib32-mesa -s
 pacman -S xdg-users-dirs -s
