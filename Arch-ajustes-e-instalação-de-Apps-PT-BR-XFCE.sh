@@ -7,14 +7,12 @@ whoami || exit
 #check updates
 pacman -Sy
 pacman -Syu
-pacman-key --refresh-keys
-pacman -Syu archlinux-keyring
 
 #grub-config microcódigo
 pacman -S amd-ucode -s
 
 #modo root
-update-grub || exit
+grub-mkconfig -o /boot/grub/grub.cfg || exit
 
 #set keyboard
 setxkbmap -model abnt2 -layout br
@@ -28,14 +26,11 @@ systemctl start paccache.timer || exit
 #update
 pacman -Sy
 
-#remoção da mitigação split-lock
-echo "kernel.split_lock_mitigate=0" > /etc/sysctl.d/99-splitlock.conf || exit
-
 #Earlyoom Daemon Linux
 pacman -S earlyoom -s
 systemctl enable earlyoom || exit
 systemctl start earlyoom || exit
-# echo ""EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$" > /etc/default/earlyoom
+echo ""EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$" >> /etc/default/earlyoom
 
 #shader booster
 echo "# enforce RADV vulkan implementation for AMD GPUs
@@ -86,7 +81,6 @@ pacman -S fastfetch -s
 pacman -S keepassxc -s
 pacman -S firefox -s
 pacman -S mpv -s
-pacman -S btop -s
 pacman -S gstreamer -s
 pacman -S gst-libav -s
 pacman -S gst-plugins-bad -s
