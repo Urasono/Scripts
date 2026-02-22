@@ -5,8 +5,7 @@
 whoami || exit
 
 #check updates
-pacman -Sy
-pacman -Syu
+pacman -Syu && pacman -Sy --needed archlinux-keyring && pacman -Su
 
 #grub-config microcódigo
 pacman -S amd-ucode -s
