@@ -5,16 +5,13 @@
 whoami || exit
 
 #check updates
-pacman -Sy
-pacman -Syu
-pacman-key --refresh-keys
-pacman -Syu archlinux-keyring
+pacman -Sy && pacman -Sy --needed archlinux-keyring && pacman -Su && pacman -Syu
 
 #grub-config microcódigo
 pacman -S amd-ucode -s
 
 #Modo root
-update-grub || exit
+grub-mkconfig -o /boot/grub/grub.cfg || exit
 
 #set keyboard
 setxkbmap -model abnt2 -layout br
@@ -27,9 +24,6 @@ systemctl start paccache.timer || exit
 
 #update
 pacman -Sy
-
-#remoção da mitigação split-lock
-echo "kernel.split_lock_mitigate=0" > /etc/sysctl.d/99-splitlock.conf || exit
 
 #Earlyoom Daemon Linux
 pacman -S earlyoom -s
@@ -89,7 +83,6 @@ pacman -S fastfetch -s
 pacman -S keepassxc -s
 pacman -S firefox -s
 pacman -S mpv -s
-pacman -S btop -s
 pacman -S gstreamer -s
 pacman -S gst-libav -s
 pacman -S gst-plugins-bad -s
