@@ -121,7 +121,7 @@ pacman -S xfce4-goodies -y
 
 #yay AUR
 git clone "https://aur.archlinux.org/yay-bin.git"
-#git clone "https://aur.archlinux.org/arch-update.git"
+git clone "https://aur.archlinux.org/topgrade-bin.git"
 
 #end
 echo "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf | Reinicie o sistema, amigão"
