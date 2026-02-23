@@ -114,6 +114,7 @@ pacman -S claws-mail -y
 pacman -S freecad -y
 pacman -S timeshift -y
 pacman -S cmus -y
+pacman -S bleachbit -y
 #pacman -S --needed bash systemd pacman pacman-contrib archlinux-contrib curl fakeroot htmlq diffutils hicolor-icon-theme python python-pyqt6 qt6-svg glib2 xdg-utils
 
 #yay AUR
