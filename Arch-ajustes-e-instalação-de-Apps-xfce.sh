@@ -39,6 +39,16 @@ echo "# Default settings for earlyoom. This file is sourced by /bin/sh from
 EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$'"" > /etc/default/earlyoom
 systemctl start earlyoom || exit
 
+#Escalonador De Disco
+cat /sys/block/sda/queue/scheduler | sleep 1
+
+echo " # define o escalonador para NVMe
+ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"
+# define o escalonador para SSD e eMMC
+ACTION=="add|change", KERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"
+# define o escalonador para discos rotativos
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"" > /etc/udev/rules.d/60-ioschedulers.rule || exit
+
 #shader booster
 echo "# enforce RADV vulkan implementation for AMD GPUs
 export AMD_VULKAN_ICD=RADV
@@ -81,6 +91,7 @@ cd ../ || exit
 
 #install packages
 pacman -S linux-headers -y
+pacman -S linux-lts-headers -y
 pacman -S nano -y
 pacman -S bitwarden -y
 pacman -S fastfetch -y
