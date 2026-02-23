@@ -117,6 +117,7 @@ pacman -S timeshift -y
 pacman -S cmus -y
 pacman -S xfce4 -y
 pacman -S xfce4-goodies -y
+pacman -S bleachbit -y
 #pacman -S --needed bash systemd pacman pacman-contrib archlinux-contrib curl fakeroot htmlq diffutils hicolor-icon-theme python python-pyqt6 qt6-svg glib2 xdg-utils
 
 #yay AUR
