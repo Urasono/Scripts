@@ -118,6 +118,7 @@ pacman -S xfce4 -s
 pacman -S xfce4-goodies -s
 pacman -S cmus -s
 pacman -S tldr -s
+pacman -S bleachbit -s
 #pacman -S --needed bash systemd pacman pacman-contrib archlinux-contrib curl fakeroot htmlq diffutils hicolor-icon-theme python python-pyqt6 qt6-svg glib2 xdg-utils
 
 #yay AUR
