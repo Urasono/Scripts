@@ -42,7 +42,7 @@ systemctl start earlyoom || exit
 #cat /sys/block/sda/queue/scheduler
 
 echo ' # define o escalonador para NVMe
-ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"" > /etc/udev/rules.d/60-ioschedulers.rule || exit
+ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"
 # define o escalonador para SSD e eMMC
 ACTION=="add|change", KERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"
 # define o escalonador para discos rotativos
