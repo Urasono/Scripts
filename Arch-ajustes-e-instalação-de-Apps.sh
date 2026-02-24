@@ -41,12 +41,12 @@ systemctl start earlyoom || exit
 #Escalonador De Disco
 #cat /sys/block/sda/queue/scheduler
 
-echo " # define o escalonador para NVMe
+echo ' # define o escalonador para NVMe
 ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"" > /etc/udev/rules.d/60-ioschedulers.rule || exit
-echo "# define o escalonador para SSD e eMMC
-ACTION=="add|change", KERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"" >> /etc/udev/rules.d/60-ioschedulers.rule || exit
-echo "# define o escalonador para discos rotativos
-ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"" >> /etc/udev/rules.d/60-ioschedulers.rule || exit
+# define o escalonador para SSD e eMMC
+ACTION=="add|change", KERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"
+# define o escalonador para discos rotativos
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"' > /etc/udev/rules.d/60-ioschedulers.rule || exit
 
 #shader booster
 echo "# enforce RADV vulkan implementation for AMD GPUs
