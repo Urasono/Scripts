@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #Ajustes e instalação de Apps xfce - Ajustes e instalações de aplicativos no Arch linux, porém, com base no sistema em Inglês focando no uso com o XFCE.
 
 #Elevação do usuário ao root (CUIDADO)
