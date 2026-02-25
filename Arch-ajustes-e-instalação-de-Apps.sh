@@ -69,13 +69,13 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 #optional apps#
 #pacman -S davinci-resolve --noconfirm
 #wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage"
-#mkdir Openrgb || exit
-#mv ./*AppImage Openrgb/ || exit
-#cd Openrgb/ || exit
+#mkdir Openrgb
+#mv ./*AppImage Openrgb/
+#cd Openrgb/
 #wget "https://openrgb.org/releases/release_0.9/openrgb-udev-install.sh"
 #chmod +x openrgb-udev-install.sh
 #bash openrgb-udev-install.sh
-#cd ../ || exit
+#cd ../
 wget "https://sourceforge.net/projects/ventoy/files/v1.1.10/ventoy-1.1.10-linux.tar.gz/download"
 mkdir Ventoy
 mv ./*download Ventoy/
@@ -131,7 +131,7 @@ pacman -S bleachbit --noconfirm
 
 #Lidar com pacotes .pacnew e pacotes órfãos
 pacdiff
-#pacman -Qdtq | pacman -Rns - || exit
+#pacman -Qdtq | pacman -Rns -
 
 #yay AUR
 git clone "https://aur.archlinux.org/yay-bin.git"
