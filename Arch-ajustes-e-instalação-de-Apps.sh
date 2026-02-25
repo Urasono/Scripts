@@ -5,10 +5,10 @@
 whoami || exit
 
 #check updates
-pacman -Syu && pacman -Sy --needed archlinux-keyring -y
+pacman -Syu && pacman -Sy --needed archlinux-keyring --noconfirm
 
 #grub-config microcódigo
-pacman -S amd-ucode -y
+pacman -S amd-ucode --noconfirm
 
 #grub update
 grub-mkconfig -o /boot/grub/grub.cfg || exit
@@ -18,12 +18,12 @@ setxkbmap -model abnt2 -layout br
 loadkeys br-abnt2
 
 #pacman-contrib (empty cache weekly)
-pacman -S pacman-contrib -y
+pacman -S pacman-contrib --noconfirm
 systemctl enable paccache.timer || exit
 systemctl start paccache.timer || exit
 
 #Earlyoom Daemon Linux
-pacman -S earlyoom -y
+pacman -S earlyoom --noconfirm
 systemctl enable earlyoom || exit
 
 echo "# Default settings for earlyoom. This file is sourced by /bin/sh from
@@ -56,13 +56,13 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 #export __GL_SHADER_DISK_CACHE_SIZE=12000000000" >> .profile
 
 #NVIDIA Drivers (Open Source)
-#pacman -S nvidia-open-dkms nvidia-utils nvidia-settings -y
+#pacman -S nvidia-open-dkms nvidia-utils nvidia-settings --noconfirm
 
 #Proprietário
-#pacman -S nvidia-dkms nvidia-utils nvidia-settings -y
+#pacman -S nvidia-dkms nvidia-utils nvidia-settings --noconfirm
 
 #optional apps#
-#pacman -S davinci-resolve -y
+#pacman -S davinci-resolve --noconfirm
 #wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage"
 #mkdir Openrgb || exit
 #mv ./*AppImage Openrgb/ || exit
@@ -80,49 +80,49 @@ rm ./*download || exit
 cd ../ || exit
 
 #<Flatpak>
-#pacman -S flatpak -y
-#pacman -S flatseal -y
+#pacman -S flatpak --noconfirm
+#pacman -S flatseal --noconfirm
 #flatpak update
 
 #install packages
-pacman -S linux-headers -y
-pacman -S linux-lts-headers -y
-pacman -S nano -y
-pacman -S bitwarden -y
-pacman -S fastfetch -y
-pacman -S gdu -y
-pacman -S keepassxc -y
-pacman -S firefox -y
-pacman -S mpv -y
-pacman -S gstreamer -y
-pacman -S gst-plugins-bad -y
-pacman -S gst-plugins-good -y
-pacman -S gst-plugins-base -y
-pacman -S gst-libav -y
-pacman -S gst-plugins-ugly -y
-pacman -S ffmpeg -y
-pacman -S base-devel -y
-pacman -S gufw -y
-pacman -S wine -y
-pacman -S winetricks -y
-pacman -S steam -y
-pacman -S lutris -y
-pacman -S libreoffice-still -y
-pacman -S --needed xorg -y
-pacman -S mesa -y
-pacman -S lib32-mesa -y
-pacman -S xdg-users-dirs -y
-pacman -S flameshot -y
-pacman -S tldr -y
-pacman -S foliate -y
-pacman -S speedtest-cli -y
-pacman -S aria2 -y
-pacman -S claws-mail -y
-pacman -S freecad -y
-pacman -S timeshift -y
-pacman -S cmus -y
-pacman -S bleachbit -y
-#pacman -S --needed bash systemd pacman pacman-contrib archlinux-contrib curl fakeroot htmlq diffutils hicolor-icon-theme python python-pyqt6 qt6-svg glib2 xdg-utils
+pacman -S linux-headers --noconfirm
+pacman -S linux-lts-headers --noconfirm
+pacman -S nano --noconfirm
+pacman -S bitwarden --noconfirm
+pacman -S fastfetch --noconfirm
+pacman -S gdu --noconfirm
+pacman -S keepassxc --noconfirm
+pacman -S firefox --noconfirm
+pacman -S mpv --noconfirm
+pacman -S gstreamer --noconfirm
+pacman -S gst-plugins-bad --noconfirm
+pacman -S gst-plugins-good --noconfirm
+pacman -S gst-plugins-base --noconfirm
+pacman -S gst-libav --noconfirm
+pacman -S gst-plugins-ugly --noconfirm
+pacman -S ffmpeg --noconfirm
+pacman -S base-devel --noconfirm
+pacman -S gufw --noconfirm
+pacman -S wine --noconfirm
+pacman -S winetricks --noconfirm
+pacman -S steam --noconfirm
+pacman -S lutris --noconfirm
+pacman -S libreoffice-still --noconfirm
+pacman -S --needed xorg -y-noconfirm
+pacman -S mesa --noconfirm
+pacman -S lib32-mesa --noconfirm
+pacman -S xdg-users-dirs --noconfirm
+pacman -S flameshot --noconfirm
+pacman -S tldr --noconfirm
+pacman -S foliate --noconfirm
+pacman -S speedtest-cli --noconfirm
+pacman -S aria2 --noconfirm
+pacman -S claws-mail --noconfirm
+pacman -S freecad --noconfirm
+pacman -S timeshift --noconfirm
+pacman -S cmus --noconfirm
+pacman -S bleachbit --noconfirm
+#pacman -S --needed bash systemd pacman pacman-contrib archlinux-contrib curl fakeroot htmlq diffutils hicolor-icon-theme python python-pyqt6 qt6-svg glib2 xdg-utils --noconfirm
 
 #Lidar com pacotes .pacnew e pacotes órfãos
 pacdiff || exit
