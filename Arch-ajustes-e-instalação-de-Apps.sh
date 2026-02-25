@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 #Verificando se há erros no script
-set -euo pipefail
+set -euxo pipefail
 IFS=$'\n\t'
 
 #Ajustes e instalação de Apps - Instalação e ajustes no Arch linux com base no sistema em inglês.
