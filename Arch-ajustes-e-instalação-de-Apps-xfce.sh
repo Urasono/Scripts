@@ -22,9 +22,6 @@ pacman -S pacman-contrib -y
 systemctl enable paccache.timer || exit
 systemctl start paccache.timer || exit
 
-#update
-pacman -Sy
-
 #Earlyoom Daemon Linux
 pacman -S earlyoom -y
 systemctl enable earlyoom || exit
