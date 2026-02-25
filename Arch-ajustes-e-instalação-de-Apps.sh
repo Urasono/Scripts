@@ -1,13 +1,16 @@
 #! /usr/bin/env bash
 
+#Elevação de root (CUIDADO)
+if[[$euid -ne0]];then
+ echo "Você precisa ser root!" > &2
+ exit 1
+ fi
+ 
+#Ajustes e instalação de aplicativos com base no sistema em inglês.
+
 #Verificando se há erros no script
 set -euxo pipefail
 IFS=$'\n\t'
-
-#Ajustes e instalação de Apps - Instalação e ajustes no Arch linux com base no sistema em inglês.
-
-#Elevação de usuário ao root (CUIDADO)
-whoami
 
 #check updates
 pacman -Syu && pacman -Sy --needed archlinux-keyring --noconfirm
