@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #Ajustes e instalação de Apps - Instalação e ajustes no Arch linux com base no sistema em inglês.
 
 #Elevação de usuário ao root (CUIDADO)
