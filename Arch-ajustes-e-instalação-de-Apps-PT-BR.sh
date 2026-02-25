@@ -5,7 +5,7 @@
 whoami || exit
 
 #check updates
-pacman -Syu && pacman -Sy --needed archlinux-keyring && pacman -Su && pacman -Syu
+pacman -Syu && pacman -Sy --needed archlinux-keyring -s
 
 #grub-config microcódigo
 pacman -S amd-ucode -s
@@ -22,9 +22,6 @@ pacman -S pacman-contrib -s
 systemctl enable paccache.timer || exit
 systemctl start paccache.timer || exit
 
-#update
-pacman -Sy
-
 #Earlyoom Daemon Linux
 pacman -S earlyoom -s
 systemctl enable earlyoom || exit
@@ -39,7 +36,6 @@ EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --
 systemctl start earlyoom || exit
 
 #Escalonador De Disco
-
 echo ' # define o escalonador para NVMe
 ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"
 # define o escalonador para SSD e eMMC
