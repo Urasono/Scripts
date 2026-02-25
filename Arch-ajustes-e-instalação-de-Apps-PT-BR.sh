@@ -5,10 +5,10 @@
 whoami || exit
 
 #check updates
-pacman -Syu && pacman -Sy --needed archlinux-keyring -s
+pacman -Syu && pacman -Sy --needed archlinux-keyring --noconfirm
 
 #grub-config microcódigo
-pacman -S amd-ucode -s
+pacman -S amd-ucode --noconfirm
 
 #Modo root
 grub-mkconfig -o /boot/grub/grub.cfg || exit
@@ -18,12 +18,12 @@ setxkbmap -model abnt2 -layout br
 loadkeys br-abnt2
 
 #pacman-contrib (empty cache weekly)
-pacman -S pacman-contrib -s
+pacman -S pacman-contrib --noconfirm
 systemctl enable paccache.timer || exit
 systemctl start paccache.timer || exit
 
 #Earlyoom Daemon Linux
-pacman -S earlyoom -s
+pacman -S earlyoom --noconfirm
 systemctl enable earlyoom || exit
 
 echo "# Default settings for earlyoom. This file is sourced by /bin/sh from
@@ -55,14 +55,14 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 #export __GL_SHADER_DISK_CACHE_SIZE=12000000000" >> .profile
 
 #NVIDIA Drivers (Open source)
-#pacman -S nvidia-open-dkms nvidia-utils nvidia-settings -s
+#pacman -S nvidia-open-dkms nvidia-utils nvidia-settings --noconfirm
 
 #Proprietário
 #pacman -S nvidia-dkms nvidia-utils nvidia-settings -s
 #mkinitcpio -P || exit
 
 #optional apps#
-#pacman -S davinci-resolve -s
+#pacman -S davinci-resolve --noconfirm
 #wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage"
 #mkdir Openrgb || exit
 #mv ./*AppImage Openrgb/ || exit
@@ -80,51 +80,51 @@ rm ./*download || exit
 cd ../ || exit
 
 #<Flatpak>
-#pacman -S flatpak -s
-#pacman -S flatseal -s
+#pacman -S flatpak --noconfirm
+#pacman -S flatseal --noconfirm
 #flatpak update
 
 #install packages
-pacman -S linux-headers -s
-pacman -S linux-lts-headers -s
-pacman -S nano -s
-pacman -S gdu -s
-pacman -S bitwarden -s
-pacman -S fastfetch -s
-pacman -S keepassxc -s
-pacman -S firefox -s
-pacman -S mpv -s
-pacman -S gstreamer -s
-pacman -S gst-libav -s
-pacman -S gst-plugins-bad -s
-pacman -S gst-plugins-good -s
-pacman -S gst-plugins-base -s
-pacman -S gst-plugins-ugly -s
-pacman -S ffmpeg -s
-pacman -S base-devel -s
-pacman -S gufw -s
-pacman -S wine -s
-pacman -S winetricks -s
-pacman -S steam -s
-pacman -S lutris -s
-pacman -S libreoffice-still -s
-pacman -S --needed xorg -s
-#pacman -S xorg-apps -s
-#pacman -S xorg-server -s
-pacman -S mesa -s
-pacman -S lib32-mesa -s
-pacman -S xdg-users-dirs -s
-pacman -S flameshot -s
-pacman -S tldr -s
-pacman -S foliate -s
-pacman -S speedtest-cli -s
-pacman -S aria2 -s
-pacman -S claws-mail -s
-pacman -S freecad -s
-pacman -S timeshift -s
-pacman -S cmus -s
-pacman -S bleachbit -s
-#pacman -S --needed bash systemd pacman pacman-contrib archlinux-contrib curl fakeroot htmlq diffutils hicolor-icon-theme python python-pyqt6 qt6-svg glib2 xdg-utils
+pacman -S linux-headers --noconfirm
+pacman -S linux-lts-headers --noconfirm
+pacman -S nano --noconfirm
+pacman -S gdu --noconfirm
+pacman -S bitwarden --noconfirm
+pacman -S fastfetch --noconfirm
+pacman -S keepassxc --noconfirm
+pacman -S firefox --noconfirm
+pacman -S mpv --noconfirm
+pacman -S gstreamer --noconfirm
+pacman -S gst-libav --noconfirm
+pacman -S gst-plugins-bad --noconfirm
+pacman -S gst-plugins-good --noconfirm
+pacman -S gst-plugins-base --noconfirm
+pacman -S gst-plugins-ugly --noconfirm
+pacman -S ffmpeg --noconfirm
+pacman -S base-devel --noconfirm
+pacman -S gufw --noconfirm
+pacman -S wine --noconfirm
+pacman -S winetricks --noconfirm
+pacman -S steam --noconfirm
+pacman -S lutris --noconfirm
+pacman -S libreoffice-still --noconfirm
+pacman -S --needed xorg --noconfirm
+#pacman -S xorg-apps --noconfirm
+#pacman -S xorg-server --noconfirm
+pacman -S mesa --noconfirm
+pacman -S lib32-mesa --noconfirm
+pacman -S xdg-users-dirs --noconfirm
+pacman -S flameshot --noconfirm
+pacman -S tldr --noconfirm
+pacman -S foliate --noconfirm
+pacman -S speedtest-cli --noconfirm
+pacman -S aria2 --noconfirm
+pacman -S claws-mail --noconfirm
+pacman -S freecad --noconfirm
+pacman -S timeshift --noconfirm
+pacman -S cmus --nocomfirm
+pacman -S bleachbit --noconfirm
+#pacman -S --needed bash systemd pacman pacman-contrib archlinux-contrib curl fakeroot htmlq diffutils hicolor-icon-theme python python-pyqt6 qt6-svg glib2 xdg-utils --noconfirm
 
 #Lidar com pacotes .pacnew
 pacdiff || exit
