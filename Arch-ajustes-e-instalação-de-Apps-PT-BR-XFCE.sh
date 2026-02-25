@@ -131,8 +131,9 @@ pacman -S tldr -s
 pacman -S bleachbit -s
 #pacman -S --needed bash systemd pacman pacman-contrib archlinux-contrib curl fakeroot htmlq diffutils hicolor-icon-theme python python-pyqt6 qt6-svg glib2 xdg-utils
 
-#Lidar com pacotes .pacnew
+#Lidar com pacotes .pacnew e pacotes órfãos
 pacdiff || exit
+#pacman -Qdtq | pacman -Rns - || exit
 
 #yay AUR
 git clone "https://aur.archlinux.org/yay-bin.git"
