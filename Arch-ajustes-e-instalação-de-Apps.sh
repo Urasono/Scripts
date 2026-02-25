@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 #Elevação de root (CUIDADO)
-if [[$EUID -ne 0]];then
+if [[ $EUID -ne 0]];then
  echo "Você precisa ser root!" >&2
  exit 1
  fi
