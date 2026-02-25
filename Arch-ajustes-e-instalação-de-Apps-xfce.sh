@@ -15,7 +15,7 @@ pacman -Syu && pacman -Sy --needed archlinux-keyring --noconfirm
 pacman -S amd-ucode --noconfirm
 
 #Modo root
-grub-mkconfig -o /boot/grub/grub.cfg || exit
+grub-mkconfig -o /boot/grub/grub.cfg
 
 #set keyboard
 setxkbmap -model abnt2 -layout br
@@ -23,12 +23,12 @@ loadkeys br-abnt2
 
 #pacman-contrib (empty cache weekly)
 pacman -S pacman-contrib --noconfirm
-systemctl enable paccache.timer || exit
-systemctl start paccache.timer || exit
+systemctl enable paccache.timer
+systemctl start paccache.timer
 
 #Earlyoom Daemon Linux
 pacman -S earlyoom --noconfirm
-systemctl enable earlyoom || exit
+systemctl enable earlyoom
 
 echo "# Default settings for earlyoom. This file is sourced by /bin/sh from
 # /etc/init.d/earlyoom or by systemd from earlyoom.service.
@@ -37,7 +37,7 @@ echo "# Default settings for earlyoom. This file is sourced by /bin/sh from
 # EARLYOOM_ARGS="-m 15 -s 5"
 
 EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$'"" > /etc/default/earlyoom
-systemctl start earlyoom || exit
+systemctl start earlyoom
 
 #Escalonador De Disco
 echo ' # define o escalonador para NVMe
@@ -45,7 +45,7 @@ ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"
 # define o escalonador para SSD e eMMC
 ACTION=="add|change", KERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"
 # define o escalonador para discos rotativos
-ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"' > /etc/udev/rules.d/60-ioschedulers.rule || exit
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"' > /etc/udev/rules.d/60-ioschedulers.rule
 
 #shader booster
 echo "# enforce RADV vulkan implementation for AMD GPUs
@@ -67,20 +67,20 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 #optional apps
 #pacman -S davinci-resolve --noconfirm
 #wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage"
-#mkdir Openrgb || exit
-#mv ./*AppImage Openrgb/ || exit
-#cd Openrgb/ || exit
+#mkdir Openrgb
+#mv ./*AppImage Openrgb/
+#cd Openrgb/
 #wget "https://openrgb.org/releases/release_0.9/openrgb-udev-install.sh"
 #chmod +x openrgb-udev-install.sh
 #bash openrgb-udev-install.sh
-#cd ../ || exit
+#cd ../
 wget "https://sourceforge.net/projects/ventoy/files/v1.1.10/ventoy-1.1.10-linux.tar.gz/download"
-mkdir Ventoy || exit
-mv ./*download Ventoy/ || exit
-cd Ventoy/ || exit
-tar -xvf download || exit
-rm ./*download || exit
-cd ../ || exit
+mkdir Ventoy
+mv ./*download Ventoy/
+cd Ventoy/
+tar -xvf download
+rm ./*download
+cd ../
 
 #<Flatpak>
 #pacman -S flatpak --noconfirm
@@ -130,8 +130,8 @@ pacman -S bleachbit --noconfirm
 #pacman -S --needed bash systemd pacman pacman-contrib archlinux-contrib curl fakeroot htmlq diffutils hicolor-icon-theme python python-pyqt6 qt6-svg glib2 xdg-utils --noconfirm
 
 #Lidar com pacotes .pacnew e pacotes órfãos
-pacdiff || exit
-#pacman -Qdtq | pacman -Rns - || exit
+pacdiff
+#pacman -Qdtq | pacman -Rns -
 
 #yay AUR
 git clone "https://aur.archlinux.org/yay-bin.git"
