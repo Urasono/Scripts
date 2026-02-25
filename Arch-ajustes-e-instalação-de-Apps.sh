@@ -5,7 +5,7 @@
 whoami || exit
 
 #check updates
-pacman -Syu && pacman -Sy --needed archlinux-keyring
+pacman -Syu && pacman -Sy --needed archlinux-keyring -y
 
 #grub-config microcódigo
 pacman -S amd-ucode -y
@@ -37,7 +37,6 @@ systemctl start earlyoom || exit
 
 #Escalonador De Disco
 #cat /sys/block/sda/queue/scheduler
-
 echo ' # define o escalonador para NVMe
 ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"
 # define o escalonador para SSD e eMMC
