@@ -2,7 +2,7 @@
 
 #Elevação de root (CUIDADO)
 if[[$euid -ne0]];then
- echo "Você precisa ser root!" > &2
+ echo "Você precisa ser root!" >&2
  exit 1
  fi
  
