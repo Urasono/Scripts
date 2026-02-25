@@ -133,7 +133,7 @@ pacman -S bleachbit --noconfirm
 
 #Lidar com pacotes .pacnew e pacotes órfãos
 pacdiff
-#pacman -Qdtq | pacman -Rns - || exit
+#pacman -Qdtq | pacman -Rns -
 
 #yay AUR
 git clone "https://aur.archlinux.org/yay-bin.git"
