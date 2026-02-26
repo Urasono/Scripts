@@ -14,9 +14,15 @@ IFS=$'\n\t'
 #check updates
 pacman -Syu --needed archlinux-keyring --noconfirm
 
-#grub-config microcódigo e atualização do grub
+#Amd-ucode
 pacman -S amd-ucode --noconfirm
+
+#Verificando se há grub no sistema
+if pacman -Qs &>/dev/null; then
 grub-mkconfig -o /boot/grub/grub.cfg
+else
+ "GRUB não instalado, ignorando configuração"
+ fi
 
 #set keyboard
 setxkbmap -model abnt2 -layout br
