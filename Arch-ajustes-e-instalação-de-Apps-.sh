@@ -109,7 +109,7 @@ pacman -S --needed --noconfirm \
   qt6-svg glib2 xdg-utils
 
 #Lidar com pacotes .pacnew e pacotes órfãos
-pacdiff
+pacdiff || true
 #pacman -Qdtq | pacman -Rns -
 
 #yay AUR
