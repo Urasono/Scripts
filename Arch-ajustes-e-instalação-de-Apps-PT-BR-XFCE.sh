@@ -62,10 +62,13 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 #export __GL_SHADER_DISK_CACHE_SIZE=12000000000" >> .profile
 
 #NVIDIA Drivers (Open Source)
-#pacman -S nvidia-open-dkms nvidia-utils nvidia-settings --noconfirm
+#pacman -S --noconfirm \
+#nvidia-open-dkms nvidia-utils nvidia-settings
 
 #(Proprietário)
-#pacman -S nvidia-dkms nvidia-utils nvidia-settings --noconfirm
+#pacman -S --needed --noconfirm \
+#nvidia-dkms nvidia-utils nvidia-settings
+
 #mkinitcpio -P
 
 #instalações de aplicativos extras
@@ -91,48 +94,21 @@ cd ../
 #pacman -S davinci-resolve --noconfirm
 
 #install packages
-pacman -S linux-headers --noconfirm
-pacman -S linux-lts-headers --noconfirm
-pacman -S nano --noconfirm
-pacman -S bitwarden --noconfirm
-pacman -S gdu --noconfirm
-pacman -S fastfetch --noconfirm
-pacman -S keepassxc --noconfirm
-pacman -S firefox --noconfirm
-pacman -S mpv --noconfirm
-pacman -S gstreamer --noconfirm
-pacman -S gst-libav --noconfirm
-pacman -S gst-plugins-bad --noconfirm
-pacman -S gst-plugins-good --noconfirm
-pacman -S gst-plugins-base --noconfirm
-pacman -S gst-plugins-ugly --noconfirm
-pacman -S ffmpeg --noconfirm
-pacman -S base-devel --noconfirm
-pacman -S gufw --noconfirm
-pacman -S wine --noconfirm
-pacman -S winetricks --noconfirm
-pacman -S steam --noconfirm
-pacman -S lutris --noconfirm
-pacman -S libreoffice-still --noconfirm
-pacman -S --needed xorg --noconfirm
-#pacman -S xorg-apps --noconfirm
-#pacman -S xorg-server --noconfirm
-pacman -S mesa --noconfirm
-pacman -S lib32-mesa --noconfirm
-pacman -S xdg-users-dirs --noconfirm
-pacman -S flameshot --noconfirm
-pacman -S foliate --noconfirm
-pacman -S speedtest-cli --noconfirm
-pacman -S aria2 --noconfirm
-pacman -S claws-mail --noconfirm
-pacman -S freecad --noconfirm
-pacman -S timeshift --noconfirm
-pacman -S xfce4 --noconfirm
-pacman -S xfce4-goodies --noconfirm
-pacman -S cmus --noconfirm
-pacman -S tldr --noconfirm
-pacman -S bleachbit --noconfirm
-#pacman -S --needed bash systemd pacman pacman-contrib archlinux-contrib curl fakeroot htmlq diffutils hicolor-icon-theme python python-pyqt6 qt6-svg glib2 xdg-utils --noconfirm
+
+pacman -S --needed --noconfirm \
+  nano bitwarden fastfetch gdu keepassxc \
+  firefox mpv gstreamer gst-plugins-bad \
+  gst-plugins-good gst-plugins-base gst-libav \
+  gst-plugins-ugly ffmpeg base-devel gufw \
+  wine winetricks steam lutris libreoffice-still \
+  xorg mesa lib32-mesa xdg-users-dirs flameshot \
+  tldr foliate speedtest-cli aria2 claws-mail \
+  freecad timeshift cmus bleachbit 
+  
+pacman -S --needed --noconfirm \
+  pacman-contrib archlinux-contrib curl fakeroot \
+  htmlq diffutils hicolor-icon-theme python python-pyqt6 \
+  qt6-svg glib2 xdg-utils
 
 #Lidar com pacotes .pacnew e pacotes órfãos
 pacdiff
