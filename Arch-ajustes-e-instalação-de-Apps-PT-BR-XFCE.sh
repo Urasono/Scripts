@@ -105,6 +105,7 @@ pacman -S --needed --noconfirm \
   tldr foliate speedtest-cli aria2 claws-mail \
   freecad timeshift cmus bleachbit 
   
+#instalação extra
 pacman -S --needed --noconfirm \
   pacman-contrib archlinux-contrib curl fakeroot \
   htmlq diffutils hicolor-icon-theme python python-pyqt6 \
