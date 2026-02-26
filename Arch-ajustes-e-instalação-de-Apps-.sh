@@ -7,7 +7,7 @@ if [[ $EUID -ne 0 ]]; then
  exit 1
  fi
  
-#Verificação se há erros
+#Verificação se há erros no script
 set -euxo pipefail
 IFS=$'\n\t'
 
@@ -17,23 +17,23 @@ pacman -Syu --needed archlinux-keyring --noconfirm
 #Amd-ucode
 pacman -S amd-ucode --noconfirm
 
-#Verificando se há grub no sistema
+#Verificando se há grub no sistema e, caso não venha a ter, o comando é ignorado
 if pacman -Qs &>/dev/null; then
 grub-mkconfig -o /boot/grub/grub.cfg
 else
  "GRUB não instalado, ignorando configuração"
  fi
 
-#set keyboard
+#Alteração de keyboard para abnt2 no tty e na interface gráfica
 setxkbmap -model abnt2 -layout br
 loadkeys br-abnt2
 
-#pacman-contrib (empty cache weekly)
+#pacman-contrib (Apagar o cache semanalmente para evitar um sistema sobrecarregado)
 pacman -S pacman-contrib --noconfirm
 systemctl enable paccache.timer
 systemctl start paccache.timer
 
-#Earlyoom Daemon Linux
+#Earlyoom Daemon Linux (Gerenciador a nível de sistema que trata de evitar o congelamento total do sistema ao estar sobrecarregado
 pacman -S earlyoom --noconfirm
 systemctl enable earlyoom
 echo "# Default settings for earlyoom. This file is sourced by /bin/sh from
@@ -46,7 +46,7 @@ EARLYOOM_ARGS=\"-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' -
 
 systemctl start earlyoom
 
-#Escalonador De Disco
+#Escalonador De Disco (Ajuste para ter melhor transferência de dados, porém, é preciso verificar se as informações do seu HDD, SSD ou nvme estão de acordo com o script)
 echo ' # define o escalonador para NVMe
 ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"
 # define o escalonador para SSD e eMMC
@@ -121,6 +121,9 @@ pacdiff || true
 #yay AUR
 git clone "https://aur.archlinux.org/yay-bin.git"
 git clone "https://aur.archlinux.org/topgrade-bin.git"
+
+#Limpeza Final de cache do pacman
+pacman -Scc --noconfirm
 
 #end
 echo "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf | Reinicie o sistema, amigão"
