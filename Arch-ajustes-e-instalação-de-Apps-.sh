@@ -14,10 +14,8 @@ IFS=$'\n\t'
 #check updates
 pacman -Syu --needed archlinux-keyring --noconfirm
 
-#grub-config microcódigo
+#grub-config microcódigo e atualização do grub
 pacman -S amd-ucode --noconfirm
-
-#modo root
 grub-mkconfig -o /boot/grub/grub.cfg
 
 #set keyboard
