@@ -48,13 +48,13 @@ systemctl start earlyoom
 
 #Escalonador De Disco (Ajuste para ter melhor transferência de dados, porém, é preciso verificar se as informações do seu HDD, SSD ou nvme estão de acordo com o script)
 #echo ' # define o escalonador para NVMe
-ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"
+#ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"
 # define o escalonador para SSD e eMMC
-ACTION=="add|change", KERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"
+#ACTION=="add|change", KERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"
 # define o escalonador para discos rotativos
-ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"' > /etc/udev/rules.d/60-ioschedulers.rule
+#ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"' > /etc/udev/rules.d/60-ioschedulers.rule
 
-#shader booster (AMD VULKAN)
+#shader booster (Para AMD VULKAN e visa aumentar o cache para uma aplicação mais pesada e exigente)
 echo "# enforce RADV vulkan implementation for AMD GPUs
 export AMD_VULKAN_ICD=RADV
 
@@ -69,7 +69,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 #pacman -S --noconfirm \
 #nvidia-open-dkms nvidia-utils nvidia-settings
 
-#(Proprietário)
+#(NVIDIA Driver Proprietários)
 #pacman -S --needed --noconfirm \
 #nvidia-dkms nvidia-utils nvidia-settings
 
@@ -96,7 +96,7 @@ cd ../
 #flatpak update
 #pacman -S davinci-resolve --noconfirm
 
-#install packages
+#instalação dos pacotes
 
 pacman -S --needed --noconfirm \
   nano bitwarden fastfetch gdu keepassxc \
