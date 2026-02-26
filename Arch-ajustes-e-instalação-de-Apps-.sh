@@ -47,7 +47,7 @@ EARLYOOM_ARGS=\"-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' -
 systemctl start earlyoom
 
 #Escalonador De Disco (Ajuste para ter melhor transferência de dados, porém, é preciso verificar se as informações do seu HDD, SSD ou nvme estão de acordo com o script)
-echo ' # define o escalonador para NVMe
+#echo ' # define o escalonador para NVMe
 ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"
 # define o escalonador para SSD e eMMC
 ACTION=="add|change", KERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"
