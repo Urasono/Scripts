@@ -6,7 +6,7 @@ if [[ $EUID -ne 0 ]]; then
  echo "Você precisa ser root!" >&2
  exit 1
  fi
- 
+
 #Verificação se há erros no script
 set -euxo pipefail
 IFS=$'\n\t'
@@ -104,8 +104,8 @@ pacman -S --needed --noconfirm \
   wine winetricks steam lutris libreoffice-still \
   xorg mesa lib32-mesa xdg-users-dirs flameshot \
   tldr foliate speedtest-cli aria2 claws-mail \
-  freecad timeshift cmus bleachbit 
-  
+  freecad timeshift cmus bleachbit
+
 #instalação extra
 pacman -S --needed --noconfirm \
   pacman-contrib archlinux-contrib curl fakeroot \
@@ -114,7 +114,7 @@ pacman -S --needed --noconfirm \
 
 #Lidar com pacotes .pacnew e pacotes órfãos
 pacdiff || true
-#pacman -Qdtq | pacman -Rns -
+pacman -Qdtq | pacman -Rns -
 
 #yay AUR
 git clone "https://aur.archlinux.org/yay-bin.git"
