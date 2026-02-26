@@ -86,9 +86,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 wget "https://sourceforge.net/projects/ventoy/files/v1.1.10/ventoy-1.1.10-linux.tar.gz/download" -O Ventoy.tar.gz
 mkdir Ventoy
 tar -xvf Ventoy.tar.gz -C Ventoy/
-cd Ventoy/
-rm Ventoy.tar.gz
-cd ../
+rm ./*Ventoy.tar.gz
 
 #<Flatpak>
 #pacman -S flatpak --noconfirm
