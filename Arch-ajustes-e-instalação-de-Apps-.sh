@@ -77,12 +77,11 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 #chmod +x openrgb-udev-install.sh
 #bash openrgb-udev-install.sh
 #cd ../
-wget "https://sourceforge.net/projects/ventoy/files/v1.1.10/ventoy-1.1.10-linux.tar.gz/download"
+wget "https://sourceforge.net/projects/ventoy/files/v1.1.10/ventoy-1.1.10-linux.tar.gz/download" -O Ventoy.tar.gz
 mkdir Ventoy
-mv ./*download Ventoy
+tar -xvf Ventoy.tar.gz -C Ventoy/
 cd Ventoy/
-tar -xvf ./*download
-rm ./*download
+rm Ventoy.tar.gz
 cd ../
 
 #<Flatpak>
