@@ -12,7 +12,7 @@ set -euxo pipefail
 IFS=$'\n\t'
 
 #check updates
-pacman -Syu && pacman -Sy --needed archlinux-keyring --noconfirm
+pacman -Syu && pacman -Syu --needed archlinux-keyring --noconfirm
 
 #grub-config microcódigo
 pacman -S amd-ucode --noconfirm
