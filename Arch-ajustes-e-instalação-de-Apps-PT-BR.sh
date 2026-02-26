@@ -2,7 +2,10 @@
 #Ajustes e instalação de Apps PT BR - Instalação de aplicativos e alguns ajustes com base no sistema em Português.
 
 #Elevação do usuário ao root (CUIDADO)
-whoami
+if [[ $EUID -ne 0 ]]; then
+ echo "Você precisa ser root!" >&2
+ exit 1
+ fi
 
 #Verificar se há erros no script
 set -euxo pipefail
