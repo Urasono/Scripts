@@ -1,12 +1,11 @@
 #! /usr/bin/env bash
+#Ajustes e instalação de apps com base no sistema em inglês.
 
 #Elevação de root (CUIDADO)
 if [[ $EUID -ne 0 ]]; then
  echo "Você precisa ser root!" >&2
  exit 1
  fi
- 
-#Ajustes e instalação de aplicativos com base no sistema em inglês.
 
 #Verificando se há erros no script
 set -euxo pipefail
