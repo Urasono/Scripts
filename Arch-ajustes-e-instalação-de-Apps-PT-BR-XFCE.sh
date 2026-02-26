@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 #Ajustes e instalação de Apps xfce PT BR - Ajustes no Arch linux e instalação de aplicativos com base no sistema em Português e buscando a instalação da interface gráfica XFCE.
 
+#Elevação de root (Cuidado)
+if [[ $EUID -ne 0 ]]; then
+ echo "Você precisa ser root!" >&2
+ exit 1
+ fi
+ 
 #Verificação se há erros
 set -euxo pipefail
 IFS=$'\n\t'
-
-#Elevação de usuário ao root (CUIDADO)
-whoami
 
 #check updates
 pacman -Syu && pacman -Sy --needed archlinux-keyring --noconfirm
