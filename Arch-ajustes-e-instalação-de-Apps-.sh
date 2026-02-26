@@ -48,14 +48,14 @@ ACTION=="add|change", KERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0
 # define o escalonador para discos rotativos
 ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"' > /etc/udev/rules.d/60-ioschedulers.rule
 
-#shader booster
+#shader booster (AMD VULKAN)
 echo "# enforce RADV vulkan implementation for AMD GPUs
 export AMD_VULKAN_ICD=RADV
 
   # increase AMD and Intel cache size to 12GB
 export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 
-# increase NVIDIA cache size to 12GB
+# Aumentar o cache de shader para NVIDIA e intel
 #echo "# increase Nvidia shader cache size to 12GB
 #export __GL_SHADER_DISK_CACHE_SIZE=12000000000" >> .profile
 
