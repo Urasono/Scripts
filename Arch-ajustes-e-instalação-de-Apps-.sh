@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#Ajustes e instalação de Apps xfce PT BR - Ajustes no Arch linux e instalação de aplicativos com base no sistema em Português e buscando a instalação da interface gráfica XFCE.
+#Ajustes no Arch linux e instalação de aplicativos
 
 #Elevação de root (Cuidado)
 if [[ $EUID -ne 0 ]]; then
@@ -12,7 +12,7 @@ set -euxo pipefail
 IFS=$'\n\t'
 
 #check updates
-pacman -Syu && pacman -Syu --needed archlinux-keyring --noconfirm
+pacman -Syu --needed archlinux-keyring --noconfirm
 
 #grub-config microcódigo
 pacman -S amd-ucode --noconfirm
