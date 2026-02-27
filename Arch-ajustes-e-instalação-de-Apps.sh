@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
-#Ajustes no Arch linux e instalação de aplicativos
+# -----------------------------------------------------------
+#Nome: Arch Ajustes e instalação de apps no Arch linux
+#Descrição: Ajustes no Arch linux e instalação de aplicativos
+#Autor: Urasono
+#Versão: 1.0v
+# -----------------------------------------------------------
 
 #Elevação de root (Cuidado)
 if [[ $EUID -ne 0 ]]; then
