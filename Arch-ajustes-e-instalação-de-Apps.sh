@@ -3,7 +3,7 @@
 #Nome: Arch Ajustes e instalação de apps
 #Descrição: Ajustes no Arch linux e instalação de aplicativos
 #Autor: Urasono
-#Versão: 1.0v
+#Versão: 1.0
 # -----------------------------------------------------------
 
 #Elevação de root (Cuidado)
