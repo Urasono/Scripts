@@ -74,6 +74,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 #cpupower frequency-set -g powersave
 #cpupower frequency-set -g performance
 #cpupower frequency-set -g ondemand
+#cpupower frequency-set -g schedutil
 
 #NVIDIA Drivers (Open Source)
 #pacman -S --noconfirm \
