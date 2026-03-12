@@ -70,6 +70,11 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 #echo "# increase Nvidia shader cache size to 12GB
 #export __GL_SHADER_DISK_CACHE_SIZE=12000000000" >> .profile
 
+#Alteração da frequência de CPU
+#cpupower frequency-set -g powersave
+#cpupower frequency-set -g performance
+#cpupower frequency-set -g ondemand
+
 #NVIDIA Drivers (Open Source)
 #pacman -S --noconfirm \
 #nvidia-open-dkms nvidia-utils nvidia-settings
