@@ -46,32 +46,32 @@ PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[\e[1;93m\]\w\[\e[0m\]\n`if [ $? -eq 0 ]; th
 # PS1='[\u@\h \W]\$ '" > ~/.bashrc && source ~/.bashrc
 
 #Instalação e Configuração de Músicas
-pacman -S --needed --noconfirm /
-  docker docker-compose navidrome
-systemctl enable --now docker
+#pacman -S --needed --noconfirm /
+#  docker docker-compose navidrome
+#systemctl enable --now docker
 
 #Permitir que o usuário seja root
-gpasswd -a $USER docker && newgrp docker
+#gpasswd -a $USER docker && newgrp docker
 
 #Navidrome
-mkdir -p ~/navidrome/músicas ~/navidrome/dados && cd ~/navidrome
-echo "services:
-  navidrome:
-    image: deluan/navidrome:latest
-    user: 1000:1000 # Isso garante que o servidor tenha acesso aos seus arquivos
-    ports:
-      - "4533:4533" # A porta que vamos usar no navegador
-    restart: unless-stopped
-    environment:
-      ND_SCANSCHEDULE: 1h
-      ND_LOGLEVEL: info
-      ND_BASEURL: ""
-    volumes:
-      - "./dados:/data"
-      - "./musicas:/music" # Aqui é onde você vai colocar seus MP3/FLAC" > docker-compose.yml && cd ~/
+#mkdir -p ~/navidrome/músicas ~/navidrome/dados && cd ~/navidrome
+#echo "services:
+#  navidrome:
+#    image: deluan/navidrome:latest
+#    user: 1000:1000 # Isso garante que o servidor tenha acesso aos seus arquivos
+#    ports:
+#      - "4533:4533" # A porta que vamos usar no navegador
+#    restart: unless-stopped
+#    environment:
+#      ND_SCANSCHEDULE: 1h
+#      ND_LOGLEVEL: info
+#      ND_BASEURL: ""
+#    volumes:
+#      - "./dados:/data"
+#      - "./musicas:/music" # Aqui é onde você vai colocar seus MP3/FLAC" > docker-compose.yml && cd ~/
 
 #Subida do Servidor
-docker compose up -d
+#docker compose up -d
 
 #Obtendo as musicas
 #cd ~/navidrome/músicas
