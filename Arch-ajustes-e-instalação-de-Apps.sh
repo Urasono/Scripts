@@ -45,6 +45,12 @@ alias ls='ls --color=auto'
 PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[\e[1;93m\]\w\[\e[0m\]\n`if [ $? -eq 0 ]; then echo "\[\e[38;5;46m\]╰➜"; else echo "\[\e[38;5;196m\]╰➜"; fi`\[\e[0m\] \$ '
 # PS1='[\u@\h \W]\$ '" > ~/.bashrc && source ~/.bashrc
 
+#Script Oficial de Instalação Homebrew
+#/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+#Adicionando ao Bashrc
+#eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" >> ~/.bashrc && source ~/.bashrc
+
 #Earlyoom Daemon Linux (Gerenciador a nível de sistema que trata de evitar o congelamento total do sistema ao estar sobrecarregado
 pacman -S earlyoom --noconfirm
 systemctl enable earlyoom
