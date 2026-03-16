@@ -38,6 +38,13 @@ pacman -S pacman-contrib --noconfirm
 systemctl enable paccache.timer
 systemctl start paccache.timer
 
+#Terminal Personalizado
+echo "# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+alias ls='ls --color=auto'
+PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[\e[1;93m\]\w\[\e[0m\]\n`if [ $? -eq 0 ]; then echo "\[\e[38;5;46m\]╰➜"; else echo "\[\e[38;5;196m\]╰➜"; fi`\[\e[0m\] \$ '
+# PS1='[\u@\h \W]\$ '" > ~/.bashrc && source ~/.bashrc
+
 #Earlyoom Daemon Linux (Gerenciador a nível de sistema que trata de evitar o congelamento total do sistema ao estar sobrecarregado
 pacman -S earlyoom --noconfirm
 systemctl enable earlyoom
