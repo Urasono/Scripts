@@ -45,6 +45,13 @@ alias ls='ls --color=auto'
 PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[\e[1;93m\]\w\[\e[0m\]\n`if [ $? -eq 0 ]; then echo "\[\e[38;5;46m\]╰➜"; else echo "\[\e[38;5;196m\]╰➜"; fi`\[\e[0m\] \$ '
 # PS1='[\u@\h \W]\$ '" > ~/.bashrc && source ~/.bashrc
 
+#Zram
+pacman -S zram-generator --noconfirm
+echo "[zram0]
+zram-size = min(ram / 2, 8192)
+compression-algorithm = zstd" > /etc/systems/zram-generator.conf
+systemctl enable --now systemd-zram-setup@zram0.service
+
 #Instalação e Configuração de Músicas
 #pacman -S --needed --noconfirm /
 #  docker docker-compose navidrome
