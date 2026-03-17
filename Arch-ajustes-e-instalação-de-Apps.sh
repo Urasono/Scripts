@@ -51,6 +51,16 @@ zram-size = min(ram / 2, 8192)
 compression-algorithm = zstd" > /etc/systems/zram-generator.conf
 systemctl enable --now systemd-zram-setup@zram0.service
 
+#Swapfile
+mkswap -U clear --size 4G --file /swapfile
+swapon /swapfile
+echo "[Swap]
+What=/swapfile
+
+[Install]
+WantedBy=swap.target" > /etc/systemd/system/swapfile.swap
+systemctl enable --now swapfile.swap
+
 #Instalação e Configuração de Músicas
 #pacman -S --needed --noconfirm /
 #  docker docker-compose navidrome
