@@ -175,7 +175,8 @@ pacman -S --needed --noconfirm \
   wine winetricks steam lutris libreoffice-still \
   xorg mesa lib32-mesa xdg-users-dirs flameshot \
   tldr foliate speedtest-cli aria2 claws-mail \
-  freecad timeshift cmus bleachbit
+  freecad timeshift cmus bleachbit linux-lts-headers \
+  
 
 #instalação extra
 pacman -S --needed --noconfirm \
