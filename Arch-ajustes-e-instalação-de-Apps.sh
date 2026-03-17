@@ -35,8 +35,7 @@ loadkeys br-abnt2
 
 #pacman-contrib (Apagar o cache semanalmente para evitar um sistema sobrecarregado)
 pacman -S pacman-contrib --noconfirm
-systemctl enable paccache.timer
-systemctl start paccache.timer
+systemctl enable --now paccache.timer
 
 #Terminal Personalizado
 echo "# If not running interactively, don't do anything
