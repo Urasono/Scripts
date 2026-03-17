@@ -94,22 +94,22 @@ systemctl enable --now swapfile.swap
 #yt-dlp -x --audio-format opus --audio-quality 0 --add-metadata --embed-thumbnail --parse-metadata "playlist_index:%(track_number)s" -o "~/navidrome/musicas/%(artist)s/%(album)s/%(playlist_index)s - %(title)s.%(ext)s" "URL_DA_PLAYLIST" && cd ~/
 
 #Script Oficial de Instalação Homebrew
-#/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 #Adicionando ao Bashrc
-#eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" >> ~/.bashrc && source ~/.bashrc
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" >> ~/.bashrc && source ~/.bashrc
 
 #Earlyoom Daemon Linux (Gerenciador a nível de sistema que trata de evitar o congelamento total do sistema ao estar sobrecarregado
-pacman -S earlyoom --noconfirm
-echo "# Default settings for earlyoom. This file is sourced by /bin/sh from
+#pacman -S earlyoom --noconfirm
+#echo "# Default settings for earlyoom. This file is sourced by /bin/sh from
 # /etc/init.d/earlyoom or by systemd from earlyoom.service.
 
 # Available minimum memory 15% and free minimum swap 5%
 # EARLYOOM_ARGS=\"-m 15 -s 5\"
 
-EARLYOOM_ARGS=\"-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$'\"" > /etc/default/earlyoom
+#EARLYOOM_ARGS=\"-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$'\"" > /etc/default/earlyoom
 
-systemctl enable --now earlyoom
+#systemctl enable --now earlyoom
 
 #Escalonador De Disco (Ajuste para ter melhor transferência de dados, porém, é preciso verificar se as informações do seu HDD, SSD ou nvme estão de acordo com o script)
 #echo ' # define o escalonador para NVMe
@@ -160,9 +160,9 @@ tar -xvf Ventoy.tar.gz -C Ventoy/
 rm ./*Ventoy.tar.gz
 
 #<Flatpak>
-#pacman -S flatpak --noconfirm
-#pacman -S flatseal --noconfirm
-#flatpak update
+pacman -S flatpak --noconfirm
+pacman -S flatseal --noconfirm
+flatpak update
 #pacman -S davinci-resolve --noconfirm
 
 #instalação dos pacotes
