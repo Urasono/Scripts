@@ -39,10 +39,16 @@ systemctl enable --now paccache.timer
 
 #Terminal Personalizado
 echo "# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
+[[ himBHs != *i* ]] && return
 alias ls='ls --color=auto'
-PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[\e[1;93m\]\w\[\e[0m\]\n`if [ $? -eq 0 ]; then echo "\[\e[38;5;46m\]╰➜"; else echo "\[\e[38;5;196m\]╰➜"; fi`\[\e[0m\] \$ '
-# PS1='[\u@\h \W]\$ '" > ~/.bashrc && source ~/.bashrc
+alias l="ls -l"
+alias la="ls -a"
+alias up="apt upgrade"
+alias upgd="pkg upgrade"
+alias ouvir="mpv --no-video --ytdl-format='bestaudio[acodec^=opus]'"
+alias ver="mpv --ytdl-format='bestvideo[height<=720][vcodec^=avc1]+bestaudio[acodec^=opus]'"
+PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[\e[1;93m\]\w\[\e[0m\]\n\[\e[38;5;46m\]╰➜\[\e[0m\] $ '
+# PS1='[\u@\h \W]$ '" > ~/.bashrc && source ~/.bashrc
 
 #Zram
 pacman -S zram-generator --noconfirm
