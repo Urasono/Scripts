@@ -184,7 +184,6 @@ pacman -S --needed --noconfirm \
   tldr foliate speedtest-cli aria2 claws-mail \
   freecad timeshift cmus bleachbit linux-lts-headers \
   yt-dlp lm_sensors
-  
 
 #instalação extra
 pacman -S --needed --noconfirm \
