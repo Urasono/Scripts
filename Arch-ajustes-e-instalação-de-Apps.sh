@@ -29,6 +29,13 @@ else
  "GRUB não instalado, ignorando configuração"
  fi
 
+#Maximizar performance do SSD se houver no sistema (Reduz a vida útil)
+
+# SATA Active Link Power Management
+#echo "ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", \
+#    ATTR{link_power_management_policy}=="*", \
+#    ATTR{link_power_management_policy}="max_performance"" > /etc/default/grub
+
 #Alteração de keyboard para abnt2 no tty e na interface gráfica
 setxkbmap -model abnt2 -layout br
 loadkeys br-abnt2
@@ -112,7 +119,7 @@ echo "EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co
 # More documentation at `man earlyoom` or `earlyoom -h`." > /etc/default/earlyoom
 
 #Escalonador De Disco (Ajuste para ter melhor transferência de dados, porém, é preciso verificar se as informações do seu HDD, SSD ou nvme estão de acordo com o script)
-#echo ' # define o escalonador para NVMe
+echo ' # define o escalonador para NVMe
 #ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"
 # define o escalonador para SSD e eMMC
 #ACTION=="add|cserviKERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"
