@@ -29,7 +29,7 @@ else
  "GRUB não instalado, ignorando configuração"
  fi
 
-#Maximizar performance do SSD se houver no sistema (Reduz a vida útil)
+#Maximizar performance do SSD se houver no sistema
 
 # SATA Active Link Power Management
 #echo "ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", \
