@@ -102,7 +102,13 @@ kernel.printk = 3 3 3 3
 net.core.netdev_max_backlog = 4096
 
 # Set size of file handles and inode cache
-fs.file-max = 2097152" > /etc/sysctl.d/99-vm-settings.conf
+fs.file-max = 2097152
+
+# page-cluster controls the number of pages up to which consecutive pages are read in from swap in a single attempt.
+# This is the swap counterpart to page cache readahead. The mentioned consecutivity is not in terms of virtual/physical addresses,
+# but consecutive on swap space - that means they were swapped out together. (Default is 3)
+# increase this value to 1 or 2 if you are using physical swap (1 if ssd, 2 if hdd)
+#vm.page-cluster = 0" > /etc/sysctl.d/99-vm-setup-settings.conf
 
 #Instalação e Configuração de Músicas
 #pacman -S --needed --noconfirm /
