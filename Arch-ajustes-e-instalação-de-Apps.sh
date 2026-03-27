@@ -187,7 +187,7 @@ pacman -S --needed --noconfirm \
   xorg mesa lib32-mesa xdg-users-dirs flameshot \
   tldr foliate speedtest-cli aria2 claws-mail \
   freecad timeshift cmus bleachbit linux-lts-headers \
-  yt-dlp lm_sensors
+  yt-dlp lm_sensors dhcp 
 
 #instalação extra
 pacman -S --needed --noconfirm \
