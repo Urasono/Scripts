@@ -102,7 +102,7 @@ kernel.printk = 3 3 3 3
 net.core.netdev_max_backlog = 4096
 
 # Set size of file handles and inode cache
-fs.file-max = 2097152" > /etc/sysctl.d/95-vm-settings.conf
+fs.file-max = 2097152" > /etc/sysctl.d/99-vm-settings.conf
 
 #Instalação e Configuração de Músicas
 #pacman -S --needed --noconfirm /
