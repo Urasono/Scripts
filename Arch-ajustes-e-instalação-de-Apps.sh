@@ -132,6 +132,15 @@ SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", TEST=="/sys/module/snd
 #CPU dma latency rules
 echo "DEVPATH=="/devices/virtual/misc/cpu_dma_latency", OWNER="root", GROUP="audio", MODE="0660"" > /etc/udev/rules.d/99-cpu-dma-latency.rules
 
+#Journal size
+echo "[Journal]
+SystemMaxUse=50M" > /etc/systemd/journal.conf.d
+
+#Melhora de performance que usam tcmalloc
+echo "# Improve performance for applications that use tcmalloc
+# https://github.com/google/tcmalloc/blob/master/docs/tuning.md#system-level-optimizations
+w! /sys/kernel/mm/transparent_hugepage/defrag - - - - defer+madvise" > /etc/tmpfiles.d/thp.conf
+
 #Instalação e Configuração de Músicas
 #pacman -S --needed --noconfirm /
 #  docker docker-compose navidrome
