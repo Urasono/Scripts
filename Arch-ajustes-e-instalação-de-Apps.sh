@@ -129,6 +129,9 @@ SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", TEST=="/sys/module/snd
         echo $$(cat /sys/module/snd_hda_intel/parameters/power_save) > /run/udev/snd-hda-intel-powersave; \
         echo 0 > /sys/module/snd_hda_intel/parameters/power_save'"" > /etc/udev/rules.d/20-audio-pm.rules
 
+#CPU dma latency rules
+echo "DEVPATH=="/devices/virtual/misc/cpu_dma_latency", OWNER="root", GROUP="audio", MODE="0660"" > /etc/udev/rules.d/99-cpu-dma-latency.rules
+
 #Instalação e Configuração de Músicas
 #pacman -S --needed --noconfirm /
 #  docker docker-compose navidrome
