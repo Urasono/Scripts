@@ -77,10 +77,32 @@ What=/swapfile
 WantedBy=swap.target" > /etc/systemd/system/swapfile.swap
 systemctl enable --now swapfile.swap
 
-#Alteração do swapiness para um valor aceitável na maioria das distribuições linux
+#Alteração do swapiness para um valor aceitável na maioria das distribuições linux e algumas configurações extras na vm
 echo "# A low value causes the kernel to prefer freeing up open files (page cache), a high value causes the kernel to try to use swap space,          
 # and a value of 100 means IO cost is assumed to be equal.
-vm.swappiness = 100" > /etc/sysctl.d/99-swapiness.conf
+vm.swappiness = 100 
+
+# The value controls the tendency of the kernel to reclaim the memory which is used for caching of directory and inode objects (VFS cache).
+# Lowering it from the default value of 100 makes the kernel less inclined to reclaim VFS cache (do not set it to 0, this may produce out-of-memory conditions)
+vm.vfs_cache_pressure = 50
+
+# Contains, as bytes, the number of pages at which a process which is
+# generating disk writes will itself start writing out dirty data.
+vm.dirty_bytes = 268435456
+
+# This action will speed up your boot and shutdown, because one less module is loaded. Additionally disabling watchdog timers increases performance and lowers power consumption
+# Disable NMI watchdog
+kernel.nmi_watchdog = 0
+
+# To hide any kernel messages from the console
+kernel.printk = 3 3 3 3
+
+# Increase netdev receive queue
+# May help prevent losing packets
+net.core.netdev_max_backlog = 4096
+
+# Set size of file handles and inode cache
+fs.file-max = 2097152" > /etc/sysctl.d/99-vm-settings.conf
 
 #Instalação e Configuração de Músicas
 #pacman -S --needed --noconfirm /
