@@ -77,6 +77,11 @@ What=/swapfile
 WantedBy=swap.target" > /etc/systemd/system/swapfile.swap
 systemctl enable --now swapfile.swap
 
+#Alteração do swapiness para um valor aceitável na maioria das distribuições linux
+echo "# A low value causes the kernel to prefer freeing up open files (page cache), a high value causes the kernel to try to use swap space,          
+# and a value of 100 means IO cost is assumed to be equal.
+vm.swappiness = 100" > /etc/sysctl.d/99-swapiness.conf
+
 #Instalação e Configuração de Músicas
 #pacman -S --needed --noconfirm /
 #  docker docker-compose navidrome
