@@ -36,6 +36,9 @@ else
 #    ATTR{link_power_management_policy}=="*", \
 #    ATTR{link_power_management_policy}="max_performance"" > /etc/default/grub
 
+#Removendo mitigação do kernel
+echo "kernel.split_lock_mitigate=0" > /etc/sysctl.d/99-splitlock.conf
+
 #Alteração de keyboard para abnt2 no tty e na interface gráfica
 setxkbmap -model abnt2 -layout br
 loadkeys br-abnt2
