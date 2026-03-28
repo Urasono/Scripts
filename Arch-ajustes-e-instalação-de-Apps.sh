@@ -48,9 +48,8 @@ pacman -S pacman-contrib --noconfirm
 systemctl enable --now paccache.timer
 
 #Terminal Personalizado
-echo "# If not running interactively, don't do anything
-[[ himBHs != *i* ]] && return
-alias ls='ls --color=auto'
+echo "[[ himBHs != *i* ]] && return
+alias ls="ls --color=auto"
 alias l="ls -l"
 alias la="ls -a"
 alias up="apt upgrade"
