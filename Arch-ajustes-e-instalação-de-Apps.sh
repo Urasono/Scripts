@@ -125,11 +125,10 @@ configure_keyboard() {
 }
 
 configure_bashrc() {
+  
   log "configurando .bashrc"
 
-  local user_home
-  user_home=$(eval echo "~${SUDO_USER: -root}")"
-  cat <<'EOF' > "${user_home}/.bashrc"
+  cat <<'EOF' > ~/.bashrc
 [[ himBHs != *i* ]] && return
 alias ls="ls --color=auto"
 alias l="ls -l"
