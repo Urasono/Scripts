@@ -95,7 +95,7 @@ configure_zram() {
   
   pacman -S zram-generator --noconfirm
   
-  cat <<'EOF' > /etc/systemd/zram-generator.conf"
+  cat <<'EOF' > /etc/systemd/zram-generator.conf
 [zram0]
 zram-size = min(ram / 2, 8192)
 compression-algorithm = zstd
@@ -195,7 +195,7 @@ EOF
 
 #Navidrome
 #mkdir -p ~/navidrome/músicas ~/navidrome/dados && cd ~/navidrome
-  #cat <<'EOF' > /docker-compose.yml
+  #cat <<'EOF' > ~/docker-compose.yml
   
   #  navidrome:
 #    image: deluan/navidrome:latest
@@ -225,7 +225,10 @@ configure_oficial_script_homebrew() {
 
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" >> ~/.bashrc && source ~/.bashrc
+  cat <<'EOF' >> ~/.bashrc
+
+  eval \"\$($(brew --prefix)/bin/brew shellenv)\
+EOF
 }
 
 configure_Disk_scaler() {
