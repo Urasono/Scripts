@@ -1,33 +1,60 @@
 #!/usr/bin/env bash
-
+#-------------------------------------------------------------
 #Nome: Arch Ajustes e instalação de apps
 #Descrição: Ajustes no Arch linux e instalação de aplicativos
 #Autor: Urasono
 #Versão: 1.0
+#-------------------------------------------------------------
 
-#Verificação se há erros no script
 set -euo pipefail
 IFS=$'\n\t'
 
-#Elevação de root (Cuidado)
-if [[ $EUID -ne 0 ]]; then
- echo "Você precisa ser root!" >&2
+#------------------FUNÇÕES---------------
+log() {
+  echo -e "\e[1;32m[INFO]\e[0m $1"
+}
+
+warn() {
+  echo -e "\e[1;33m[WARN]\e[0m $1"
+}
+
+error() {
+  echo -e "\e[1;31m[ERRO]\e[0m $1" >&2
+}
+
+required_root() {
+  if [[ $EUID -ne 0 ]]; then
+ error "Você precisa ser root!"
  exit 1
  fi
+}
 
-echo "atualizando sistema"
-pacman -Syu --needed archlinux-keyring --noconfirm
+command_exists() {
+  command -v "$1" &>/devil/null
+}
 
-echo "instalando amd-ucode..."
-pacman -S amd-ucode --noconfirm
+#---------------SISTEMA----------------------------
 
-#Verificando se há grub no sistema e, caso não venha a ter, o comando é ignorado
-if command -v grub-mkconfig &>/dev/null; then
-grub-mkconfig -o /boot/grub/grub.cfg
+update_system() {
+  log "atualizando sistema"
+  pacman -Syu --needed archlinux-keyring --noconfirm
+}
+
+install_microcide() {
+  log "instalando amd-ucode..."
+  pacman -S amd-ucode --noconfirm || warn "Falha ao instalar AMD-ucode"
+}
+
+configure_grub() {
+ if command_exists grub-mkconfig; then
+  log "Atualizando GRUB..."
+  grub-mkconfig -o /boot/grub/grub.cfg
 else
- echo "GRUB não instalado, ignorando configuração"
+   warn "GRUB não instalado, ignorando configuração..."
  fi
+ }
 
+#--------------------CONFIGURAÇÕES------------------------------
 #Maximizar performance do SSD se houver no sistema
 
 # SATA Active Link Power Management
@@ -35,8 +62,57 @@ else
 #    ATTR{link_power_management_policy}=="*", \
 #    ATTR{link_power_management_policy}="max_performance"" > /etc/default/grub
 
-echo "Removendo mitigação do kernel"
-echo "kernel.split_lock_mitigate=0" > /etc/sysctl.d/99-splitlock.conf
+configure_sysctl() {
+
+  log "configurando"
+  cat <<'EOF' > /etc/sysctl.d/99-custom.conf
+kernel.split_lock_mitigate=0
+vm.swappiness = 100
+vm.vfs_cache_pressure = 50
+vm.dirty_bytes = 268435456
+kernel.nmi_watchdog = 0
+kernel.printk = 3 3 3 3
+net.core.netdev_max_backlog = 4096
+fs.file-max = 2097152
+vm.page-cluster = 0
+EOF
+
+configure_journal() {
+  log "limitando journal"
+
+  mkdir -p /etc/systemd/journal.conf.d
+
+  cat <<'EOF' >/etc/systemd/journal.conf.d/size.conf
+[Journal]
+SystemMaxUse=50M
+EOF
+
+configure_zram() {
+  log "Configurando Zram"
+  
+  pacman -S zram-generator --noconfirm
+  
+  cat << 'EOF' > /etc/systemd/zram-generator.conf"
+[zram0]
+zram-size = min(ram / 2, 8192)
+compression-algorithm = zstd
+EOF
+
+systemctl enable --now systemd-zram-setup@zram0.service
+
+configure_swapfile() {
+  log "criando swapfile"
+  
+  if [[! -f /swapfile ]]; then
+  fallocate -l 4G /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+else
+  warn "swapfile já existe, nada a fazer"
+fi
+}
+
 
 #Teclado
 setxkbmap -model abnt2 -layout br || true
