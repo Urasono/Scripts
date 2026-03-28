@@ -76,6 +76,7 @@ net.core.netdev_max_backlog = 4096
 fs.file-max = 2097152
 vm.page-cluster = 0
 EOF
+}
 
 configure_journal() {
   log "limitando journal"
@@ -86,6 +87,7 @@ configure_journal() {
 [Journal]
 SystemMaxUse=50M
 EOF
+}
 
 configure_zram() {
   log "Configurando Zram"
@@ -99,6 +101,7 @@ compression-algorithm = zstd
 EOF
 
 systemctl enable --now systemd-zram-setup@zram0.service
+}
 
 configure_swapfile() {
   log "criando swapfile"
