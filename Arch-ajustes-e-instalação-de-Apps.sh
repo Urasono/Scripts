@@ -16,10 +16,10 @@ if [[ $EUID -ne 0 ]]; then
 set -euxo pipefail
 IFS=$'\n\t'
 
-#check updates
+echo "atualizando sistema"
 pacman -Syu --needed archlinux-keyring --noconfirm
 
-#Amd-ucode
+echo "instalando amd-ucode..."
 pacman -S amd-ucode --noconfirm
 
 #Verificando se há grub no sistema e, caso não venha a ter, o comando é ignorado
@@ -36,19 +36,20 @@ else
 #    ATTR{link_power_management_policy}=="*", \
 #    ATTR{link_power_management_policy}="max_performance"" > /etc/default/grub
 
-#Removendo mitigação do kernel
+echo "Removendo mitigação do kernel"
 echo "kernel.split_lock_mitigate=0" > /etc/sysctl.d/99-splitlock.conf
 
-#Alteração de keyboard para abnt2 no tty e na interface gráfica
-setxkbmap -model abnt2 -layout br
-loadkeys br-abnt2
+#Teclado
+setxkbmap -model abnt2 -layout br || true
+loadkeys br-abnt2 || true
 
-#pacman-contrib (Apagar o cache semanalmente para evitar um sistema sobrecarregado)
+#pacman-contrib
 pacman -S pacman-contrib --noconfirm
 systemctl enable --now paccache.timer
 
-#Terminal Personalizado
-echo "[[ himBHs != *i* ]] && return
+#Bashrc
+cat <<'EOF' > "${HOME}/.bashrc"
+[[ himBHs != *i* ]] && return
 alias ls="ls --color=auto"
 alias l="ls -l"
 alias la="ls -a"
@@ -57,27 +58,35 @@ alias upgd="pkg upgrade"
 alias ouvir="mpv --no-video --ytdl-format='bestaudio[acodec^=opus]'"
 alias ver="mpv --ytdl-format='bestvideo[height<=720][vcodec^=avc1]+bestaudio[acodec^=opus]'"
 PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[\e[1;93m\]\w\[\e[0m\]\n\[\e[38;5;46m\]╰➜\[\e[0m\] $ '
-# PS1='[\u@\h \W]$ '" > ~/.bashrc && source ~/.bashrc
+# PS1='[\u@\h \W]$'
+EOF
 
 #Zram
 pacman -S zram-generator --noconfirm
-echo "[zram0]
+cat << 'EOF' > /etc/systemd/zram-generator.conf"
+[zram0]
 zram-size = min(ram / 2, 8192)
-compression-algorithm = zstd" > /etc/systems/zram-generator.conf
+compression-algorithm = zstd
+EOF
 systemctl enable --now systemd-zram-setup@zram0.service
 
 #Swapfile
-mkswap -U clear --size 4G --file /swapfile
+fallocate -l 4G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
 swapon /swapfile
-echo "[Swap]
+cat << 'EOF' > /etc/systemd/system/swapfile.swap"
+[Swap]
 What=/swapfile
 
 [Install]
-WantedBy=swap.target" > /etc/systemd/system/swapfile.swap
+WantedBy=swap.target
+EOF
 systemctl enable --now swapfile.swap
 
 #Alteração do swapiness para um valor aceitável na maioria das distribuições linux e algumas configurações extras na vm
-echo "# A low value causes the kernel to prefer freeing up open files (page cache), a high value causes the kernel to try to use swap space,          
+cat << 'EOF' > /etc/sysctl.d/99-vm-setup-settings.conf
+# A low value causes the kernel to prefer freeing up open files (page cache), a high value causes the kernel to try to use swap space,          
 # and a value of 100 means IO cost is assumed to be equal.
 vm.swappiness = 100 
 
@@ -107,10 +116,12 @@ fs.file-max = 2097152
 # This is the swap counterpart to page cache readahead. The mentioned consecutivity is not in terms of virtual/physical addresses,
 # but consecutive on swap space - that means they were swapped out together. (Default is 3)
 # increase this value to 1 or 2 if you are using physical swap (1 if ssd, 2 if hdd)
-#vm.page-cluster = 0" > /etc/sysctl.d/99-vm-setup-settings.conf
+#vm.page-cluster = 0
+EOF
 
 #Udev rules
-echo "# Disables power saving capabilities for snd-hda-intel when device is not
+cat <<'EOF' > /etc/udev/rules.d/20-áudio-pm.rules
+# Disables power saving capabilities for snd-hda-intel when device is not
 # running on battery power. This is needed because it prevents audio cracks on
 # some hardware.
 ACTION=="add", SUBSYSTEM=="sound", KERNEL=="card*", DRIVERS=="snd_hda_intel", TEST!="/run/udev/snd-hda-intel-powersave", \
@@ -126,19 +137,25 @@ SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="0", TEST=="/sys/module/snd
 SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", TEST=="/sys/module/snd_hda_intel", \
     RUN+="/usr/bin/bash -c '[[ $$(cat /sys/module/snd_hda_intel/parameters/power_save) != 0 ]] && \
         echo $$(cat /sys/module/snd_hda_intel/parameters/power_save) > /run/udev/snd-hda-intel-powersave; \
-        echo 0 > /sys/module/snd_hda_intel/parameters/power_save'"" > /etc/udev/rules.d/20-audio-pm.rules
+        echo 0 > /sys/module/snd_hda_intel/parameters/power_save'"
+EOF
 
 #CPU dma latency rules
-echo "DEVPATH=="/devices/virtual/misc/cpu_dma_latency", OWNER="root", GROUP="audio", MODE="0660"" > /etc/udev/rules.d/99-cpu-dma-latency.rules
+cat <<'EOF' > /etc/udev/rules.d/99-cpu-dma-latency.rules
+DEVPATH=="/devices/virtual/misc/cpu_dma_latency", OWNER="root", GROUP="audio", MODE="0660"
+EOF
 
-#Journal size
-echo "[Journal]
+#Journal
+mkdir -p /etc/systemd/journal.conf.d
+echo -e "[Journal]
 SystemMaxUse=50M" > /etc/systemd/journal.conf.d
 
-#Melhora de performance que usam tcmalloc
-echo "# Improve performance for applications that use tcmalloc
+#Melhora de performance em aplicativos que usam tcmalloc
+cat <<'EOF' > /etc/tmpfiles.d/thp.conf
+# Improve performance for applications that use tcmalloc
 # https://github.com/google/tcmalloc/blob/master/docs/tuning.md#system-level-optimizations
-w! /sys/kernel/mm/transparent_hugepage/defrag - - - - defer+madvise" > /etc/tmpfiles.d/thp.conf
+w! /sys/kernel/mm/transparent_hugepage/defrag - - - - defer+madvise
+EOF
 
 #Instalação e Configuração de Músicas
 #pacman -S --needed --noconfirm /
@@ -180,26 +197,34 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" >> ~/.bashrc && source ~/
 
 #Earlyoom Daemon Linux (Gerenciador a nível de sistema que trata de evitar o congelamento total do sistema ao estar sobrecarregado
 pacman -S earlyoom --noconfirm
-echo "EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$'". " > /etc/default/earlyoom
+cat <<'EOF' > /etc/default/earlyoom 
+EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$'
+EOF
 
 #Escalonador De Disco (Ajuste para ter melhor transferência de dados, porém, é preciso verificar se as informações do seu HDD, SSD ou nvme estão de acordo com o script)
-echo ' # define o escalonador para NVMe
+cat <<'EOF' > /etc/udev/rules.d/60-ioschedulers.rules
+# define o escalonador para NVMe
 #ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"
 # define o escalonador para SSD e eMMC
 #ACTION=="add|cserviKERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"
 # define o escalonador para discos rotativos
-#ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"' > /etc/udev/rules.d/60-ioschedulers.rule
+#ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
+EOF
 
 #shader booster (Para AMD VULKAN e visa aumentar o cache para uma aplicação mais pesada e exigente)
-echo "# enforce RADV vulkan implementation for AMD GPUs
+cat <<'EOF' > "${HOME}/.profile"
+# enforce RADV vulkan implementation for AMD GPUs
 export AMD_VULKAN_ICD=RADV
 
   # increase AMD and Intel cache size to 12GB
-export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
+export MESA_SHADER_CACHE_MAX_SIZE=12G
+EOF
 
 # Aumentar o cache de shader para NVIDIA e intel
-#echo "# increase Nvidia shader cache size to 12GB
-#export __GL_SHADER_DISK_CACHE_SIZE=12000000000" >> .profile
+#cat <<'EOF' > "${HOME}/.profile"
+# increase Nvidia shader cache size to 12GB
+#export __GL_SHADER_DISK_CACHE_SIZE=12000000000
+EOF
 
 #Alteração da frequência de CPU
 #cpupower frequency-set -g powersave
@@ -217,7 +242,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G" >> .profile
 
 #mkinitcpio -P
 
-#instalações de aplicativos extras
+#Pacotes Adicionais
 #mkdir Openrgb
 #wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage" -O OpenRGB.AppImage
 #mv ./OpenRGB.AppImage Openrgb/
@@ -232,13 +257,11 @@ tar -xvf Ventoy.tar.gz -C Ventoy/
 rm ./*Ventoy.tar.gz
 
 #<Flatpak>
-pacman -S flatpak --noconfirm
-pacman -S flatseal --noconfirm
-flatpak update
-#pacman -S davinci-resolve --noconfirm
+pacman -S --noconfirm flatpak flatseal
+flatpak update -y
+#pacman -S --noconfirm davinci-resolve
 
 #instalação dos pacotes
-
 pacman -S --needed --noconfirm \
   nano bitwarden fastfetch gdu keepassxc \
   firefox mpv gstreamer gst-plugins-bad \
@@ -256,16 +279,14 @@ pacman -S --needed --noconfirm \
   htmlq diffutils hicolor-icon-theme python python-pyqt6 \
   qt6-svg glib2 xdg-utils
 
-#Lidar com pacotes .pacnew e pacotes órfãos
+#Lmpeza
 pacdiff || true
-pacman -Qdtq | pacman -Rns -
+pacman -Qdtq | pacman -Rns - --nocomfirm  || true
+pacman -Scc --noconfirm
 
 #yay AUR
 git clone "https://aur.archlinux.org/yay-bin.git"
 git clone "https://aur.archlinux.org/topgrade-bin.git"
-
-#Limpeza Final de cache do pacman
-pacman -Scc --noconfirm
 
 #end
 echo "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf | Reinicie o sistema, amigão"
