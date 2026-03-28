@@ -280,7 +280,7 @@ pacman -S --needed --noconfirm \
 
 #Lmpeza
 pacdiff || true
-pacman -Qdtq | pacman -Rns - --nocomfirm  || true
+pacman -Qdtq | pacman -Rns - --noconfirm  || true
 pacman -Scc --noconfirm
 
 #yay AUR
