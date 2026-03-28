@@ -107,7 +107,7 @@ systemctl enable --now systemd-zram-setup@zram0.service
 configure_swapfile() {
   log "criando swapfile"
   
-  if [[! -f /swapfile ]]; then
+  if [[ ! -f /swapfile ]]; then
   fallocate -l 4G /swapfile
   chmod 600 /swapfile
   mkswap /swapfile
