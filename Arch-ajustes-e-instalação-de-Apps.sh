@@ -141,8 +141,6 @@ alias ver="mpv --ytdl-format='bestvideo[height<=720][vcodec^=avc1]+bestaudio[aco
 PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[\e[1;93m\]\w\[\e[0m\]\n\[\e[38;5;46m\]╰➜\[\e[0m\] $ '
 # PS1='[\u@\h \W]$'
 EOF
-
-  chown "${SUDO_USER: -root}:${SUDO_USER: -root}" "${user_home}/.bashrc"
 }
 
 configure_udev_rules() {
