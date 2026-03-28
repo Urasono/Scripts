@@ -113,14 +113,71 @@ else
 fi
 }
 
+configure_keyboard() {
+  log "configurando teclado.."
+  
+  setxkbmap -model abnt2 -layout br || true
+  loadkeys br-abnt2 || true
+}
 
-#Teclado
-setxkbmap -model abnt2 -layout br || true
-loadkeys br-abnt2 || true
+configure_bashrc() {
+  log "configurando .bashrc"
 
-#pacman-contrib
-pacman -S pacman-contrib --noconfirm
-systemctl enable --now paccache.timer
+  local user_home
+  user_home=$(eval echo "~${SUDO_USER: -root}")
+  cat <<'EOF' > "${user_home}/.bashrc"
+[[ himBHs != *i* ]] && return
+alias ls="ls --color=auto"
+alias l="ls -l"
+alias la="ls -a"
+alias up="apt upgrade"
+alias upgd="pkg upgrade"
+alias ouvir="mpv --no-video --ytdl-format='bestaudio[acodec^=opus]'"
+alias ver="mpv --ytdl-format='bestvideo[height<=720][vcodec^=avc1]+bestaudio[acodec^=opus]'"
+PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[\e[1;93m\]\w\[\e[0m\]\n\[\e[38;5;46m\]╰➜\[\e[0m\] $ '
+# PS1='[\u@\h \W]$'
+EOF
+
+  chown "${SUDO_USER: -root}:${SUDO_USER: -root}" "${user_home}/.bashrc"
+}
+
+#-----------------------PACOTES-----------------------
+
+install_base_packages() {
+
+  log "instalando pacotes base"
+  pacman -S --needed --noconfirm \
+  nano bitwarden fastfetch gdu keepassxc \
+  firefox mpv gstreamer gst-plugins-bad \
+  gst-plugins-good gst-plugins-base gst-libav \
+  gst-plugins-ugly ffmpeg base-devel gufw \
+  wine winetricks steam lutris libreoffice-still \
+  xorg mesa lib32-mesa xdg-users-dirs flameshot \
+  tldr foliate speedtest-cli aria2 claws-mail \
+  freecad timeshift cmus bleachbit linux-lts-headers \
+  yt-dlp lm_sensors dhcp
+}
+
+install_extra_packages() {
+  log "instalando extras.."
+  pacman -S --needed --noconfirm \
+  pacman-contrib archlinux-contrib curl fakeroot \
+  htmlq diffutils hicolor-icon-theme python python-pyqt6 \
+  qt6-svg glib2 xdg-utils
+}
+
+enable_services() {
+  log "Habilitando serviços"
+ 
+  systemctl enable --now paccache.timer || true
+  
+  pacman -S earlyoom --noconfirm
+cat <<'EOF' > /etc/default/earlyoom 
+EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$'
+EOF
+}
+
+
 
 #Bashrc
 cat <<'EOF' > "${HOME}/.bashrc"
