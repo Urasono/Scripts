@@ -6,15 +6,15 @@
 #Versão: 1.0
 # -----------------------------------------------------------
 
+#Verificação se há erros no script
+set -euo pipefail
+IFS=$'\n\t'
+
 #Elevação de root (Cuidado)
 if [[ $EUID -ne 0 ]]; then
  echo "Você precisa ser root!" >&2
  exit 1
  fi
-
-#Verificação se há erros no script
-set -euxo pipefail
-IFS=$'\n\t'
 
 echo "atualizando sistema"
 pacman -Syu --needed archlinux-keyring --noconfirm
@@ -23,10 +23,10 @@ echo "instalando amd-ucode..."
 pacman -S amd-ucode --noconfirm
 
 #Verificando se há grub no sistema e, caso não venha a ter, o comando é ignorado
-if pacman -Qs &>/dev/null; then
+if command -v &>/dev/null; then
 grub-mkconfig -o /boot/grub/grub.cfg
 else
- "GRUB não instalado, ignorando configuração"
+ echo "GRUB não instalado, ignorando configuração"
  fi
 
 #Maximizar performance do SSD se houver no sistema
