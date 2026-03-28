@@ -95,7 +95,7 @@ configure_zram() {
   
   pacman -S zram-generator --noconfirm
   
-  cat << 'EOF' > /etc/systemd/zram-generator.conf"
+  cat <<'EOF' > /etc/systemd/zram-generator.conf"
 [zram0]
 zram-size = min(ram / 2, 8192)
 compression-algorithm = zstd
@@ -181,9 +181,9 @@ w! /sys/kernel/mm/transparent_hugepage/defrag - - - - defer+madvise
 EOF
 }
 
-configure_music_server() {
+#configure_music_server() {
 
-  log "configurando docker e navidrome"
+#  log "configurando docker e navidrome"
 
   #Instalação e Configuração de Músicas
 #pacman -S --needed --noconfirm /
@@ -210,14 +210,14 @@ configure_music_server() {
 #    volumes:
 #      - "./dados:/data"
 #      - "./musicas:/music" # Aqui é onde você vai colocar seus MP3/FLAC
-EOF
+#EOF
 
 #Subida do Servidor
 #docker compose up -d
   #Obtendo as musicas
 #cd ~/navidrome/músicas
 #yt-dlp -x --audio-format opus --audio-quality 0 --add-metadata --embed-thumbnail --parse-metadata "playlist_index:%(track_number)s" -o "~/navidrome/musicas/%(artist)s/%(album)s/%(playlist_index)s - %(title)s.%(ext)s" "URL_DA_PLAYLIST" && cd ~/
-}
+#}
 
 configure_oficial_script_homebrew() {
 
