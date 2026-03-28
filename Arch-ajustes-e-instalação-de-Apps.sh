@@ -30,7 +30,7 @@ required_root() {
 }
 
 command_exists() {
-  command_exists "$1" &>/devil/null
+  command -v "$1" &>/devil/null
 }
 
 #---------------SISTEMA----------------------------
