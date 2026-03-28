@@ -127,7 +127,7 @@ configure_bashrc() {
   log "configurando .bashrc"
 
   local user_home
-  user_home=$(eval echo "~${SUDO_USER: -root}")
+  user_home=$(eval echo "~${SUDO_USER: -root}")"
   cat <<'EOF' > "${user_home}/.bashrc"
 [[ himBHs != *i* ]] && return
 alias ls="ls --color=auto"
