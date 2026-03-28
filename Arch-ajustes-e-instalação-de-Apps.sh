@@ -195,8 +195,9 @@ configure_music_server() {
 
 #Navidrome
 #mkdir -p ~/navidrome/músicas ~/navidrome/dados && cd ~/navidrome
-#echo "services:
-#  navidrome:
+  #cat <<'EOF' > /docker-compose.yml
+  
+  #  navidrome:
 #    image: deluan/navidrome:latest
 #    user: 1000:1000 # Isso garante que o servidor tenha acesso aos seus arquivos
 #    ports:
@@ -208,7 +209,8 @@ configure_music_server() {
 #      ND_BASEURL: ""
 #    volumes:
 #      - "./dados:/data"
-#      - "./musicas:/music" # Aqui é onde você vai colocar seus MP3/FLAC" > docker-compose.yml && cd ~/
+#      - "./musicas:/music" # Aqui é onde você vai colocar seus MP3/FLAC
+EOF
 
 #Subida do Servidor
 #docker compose up -d
