@@ -211,7 +211,7 @@ cat <<'EOF' > /etc/udev/rules.d/60-ioschedulers.rules
 EOF
 
 #shader booster (Para AMD VULKAN e visa aumentar o cache para uma aplicação mais pesada e exigente)
-cat <<'EOF' > "${HOME}/.profile"
+cat <<'EOF' > ~/.profile
 # enforce RADV vulkan implementation for AMD GPUs
 export AMD_VULKAN_ICD=RADV
 
@@ -220,7 +220,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G
 EOF
 
 # Aumentar o cache de shader para NVIDIA e intel
-#cat <<'EOF' > "${HOME}/.profile"
+#cat <<'EOF' > ~/.profile
 # increase Nvidia shader cache size to 12GB
 #export __GL_SHADER_DISK_CACHE_SIZE=12000000000
 EOF
