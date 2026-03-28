@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
-# -----------------------------------------------------------
+
 #Nome: Arch Ajustes e instalação de apps
 #Descrição: Ajustes no Arch linux e instalação de aplicativos
 #Autor: Urasono
 #Versão: 1.0
-# -----------------------------------------------------------
 
 #Verificação se há erros no script
 set -euo pipefail
