@@ -365,7 +365,7 @@ configure_dnsmaq() {
 #--------------------MAIN---------------------------
 
 main() {
-    require_root
+    required_root
 
     update_system
     install_microcode
@@ -399,4 +399,4 @@ main() {
 
 main "$@"
 
-#######--------############
+#######--------#########
