@@ -239,6 +239,54 @@ configure_Disk_scaler() {
 EOF
 }
 
+configure_shader_booster() {
+
+  log "configurando shader booster"
+
+  cat <<'EOF' > ~/.profile
+# enforce RADV vulkan implementation for AMD GPUs
+export AMD_VULKAN_ICD=RADV
+
+  # increase AMD and Intel cache size to 12GB
+export MESA_SHADER_CACHE_MAX_SIZE=12G
+EOF
+
+# Aumentar o cache de shader para NVIDIA e intel
+#cat <<'EOF' > ~/.profile
+# increase Nvidia shader cache size to 12GB
+#export __GL_SHADER_DISK_CACHE_SIZE=12000000000
+EOF
+}
+
+configure_cpu_power() {
+
+  log "Configurando a frequência da CPU"
+
+  #cpupower frequency-set -g powersave
+  #cpupower frequency-set -g performance
+  #cpupower frequency-set -g ondemand
+  #cpupower frequency-set -g schedutil
+}
+
+configure_open_source_nvidia_drivers() {
+
+  log "baixando pacotes..."
+  #pacman -S --noconfirm \
+#nvidia-open-dkms nvidia-utils nvidia-settings
+}
+
+configure_proprietary_nvidia_drivers() {
+
+  log "baixando pacotes..."
+  #pacman -S --needed --noconfirm \
+#nvidia-dkms nvidia-utils nvidia-settings
+#mkinitcpio -P
+}
+
+configure_flatpak() {
+  pacman -S --noconfirm flatpak flatseal
+  flatpak update -y
+}
 
 
 #-----------------------PACOTES-----------------------
@@ -266,6 +314,22 @@ install_extra_packages() {
   qt6-svg glib2 xdg-utils
 }
 
+install_optional_packages() {
+
+#mkdir Openrgb
+#wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage" -O OpenRGB.AppImage
+#mv ./OpenRGB.AppImage Openrgb/
+#cd Openrgb/
+#wget "https://openrgb.org/releases/release_0.9/openrgb-udev-install.sh"
+#chmod +x openrgb-udev-install.sh
+#bash openrgb-udev-install.sh
+#cd ../
+wget "https://sourceforgeprojects/ventoy/files/v1.1.10/ventoy-1.1.10-linux.tar.gz/download" -O Ventoy.tar.gz
+mkdir Ventoy
+tar -xvf Ventoy.tar.gz -C Ventoy/
+rm ./*Ventoy.tar.gz
+}
+
 enable_services() {
   log "Habilitando serviços"
  
@@ -285,6 +349,15 @@ pacman -Qdtq | pacman -Rns - --noconfirm  || true
 pacman -Scc --noconfirm
 }
 
+aur_git_clone() {
+  git clone "https://aur.archlinux.org/yay-bin.git"
+  git clone "https://aur.archlinux.org/topgrade-bin.git"
+}
+
+configure_dnsmaq() {
+  log "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf | Reinicie o sistema, amigão"
+}
+
 #--------------------MAIN---------------------------
 
 main() {
@@ -298,6 +371,11 @@ main() {
     configure_keyboard
     configure_music_server
     configure_Disk_scaler
+    configure_shader_booster
+    configure_cpu_power
+    configure_open_source_nvidia_drivers
+    configure_proprietary_nvidia_drivers
+    configure_flatpak
     configure_oficial_script_homebrew
     configure_sysctl
     configure_journal
@@ -306,105 +384,15 @@ main() {
     configure_bashrc
     install_base_packages
     install_extra_packages
-
+    install_optional_packages
+    aur_git_clone
+    configure_dnsmaq
     enable_services
     cleanup_system
 
     log "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf | Reinicie o sistema, amigão"
 }
 
-configure_Disk_scaler() {
-  log "configurando escalonador de disco"
-
-  cat <<'EOF' > /etc/udev/rules.d/60-ioschedulers.rules
-# define o escalonador para NVMe
-#ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"
-# define o escalonador para SSD e eMMC
-#ACTION=="add|cserviKERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"
-# define o escalonador para discos rotativos
-#ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
-
-
 main "$@"
 
-#######--------#############
-
-#shader booster (Para AMD VULKAN e visa aumentar o cache para uma aplicação mais pesada e exigente)
-cat <<'EOF' > ~/.profile
-# enforce RADV vulkan implementation for AMD GPUs
-export AMD_VULKAN_ICD=RADV
-
-  # increase AMD and Intel cache size to 12GB
-export MESA_SHADER_CACHE_MAX_SIZE=12G
-EOF
-
-# Aumentar o cache de shader para NVIDIA e intel
-#cat <<'EOF' > ~/.profile
-# increase Nvidia shader cache size to 12GB
-#export __GL_SHADER_DISK_CACHE_SIZE=12000000000
-EOF
-
-#Alteração da frequência de CPU
-#cpupower frequency-set -g powersave
-#cpupower frequency-set -g performance
-#cpupower frequency-set -g ondemand
-#cpupower frequency-set -g schedutil
-
-#NVIDIA Drivers (Open Source)
-#pacman -S --noconfirm \
-#nvidia-open-dkms nvidia-utils nvidia-settings
-
-#(NVIDIA Driver Proprietários)
-#pacman -S --needed --noconfirm \
-#nvidia-dkms nvidia-utils nvidia-settings
-
-#mkinitcpio -P
-
-#Pacotes Adicionais
-#mkdir Openrgb
-#wget "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/OpenRGB_1.0rc2_x86_64_0fca93e.AppImage" -O OpenRGB.AppImage
-#mv ./OpenRGB.AppImage Openrgb/
-#cd Openrgb/
-#wget "https://openrgb.org/releases/release_0.9/openrgb-udev-install.sh"
-#chmod +x openrgb-udev-install.sh
-#bash openrgb-udev-install.sh
-#cd ../
-wget "https://sourceforge.net/projects/ventoy/files/v1.1.10/ventoy-1.1.10-linux.tar.gz/download" -O Ventoy.tar.gz
-mkdir Ventoy
-tar -xvf Ventoy.tar.gz -C Ventoy/
-rm ./*Ventoy.tar.gz
-
-#<Flatpak>
-pacman -S --noconfirm flatpak flatseal
-flatpak update -y
-#pacman -S --noconfirm davinci-resolve
-
-#instalação dos pacotes
-pacman -S --needed --noconfirm \
-  nano bitwarden fastfetch gdu keepassxc \
-  firefox mpv gstreamer gst-plugins-bad \
-  gst-plugins-good gst-plugins-base gst-libav \
-  gst-plugins-ugly ffmpeg base-devel gufw \
-  wine winetricks steam lutris libreoffice-still \
-  xorg mesa lib32-mesa xdg-users-dirs flameshot \
-  tldr foliate speedtest-cli aria2 claws-mail \
-  freecad timeshift cmus bleachbit linux-lts-headers \
-  yt-dlp lm_sensors dhcp 
-
-#instalação extra
-pacman -S --needed --noconfirm \
-  pacman-contrib archlinux-contrib curl fakeroot \
-  htmlq diffutils hicolor-icon-theme python python-pyqt6 \
-  qt6-svg glib2 xdg-utils
-
-#Lmpeza
-pacdiff || true
-pacman -Qdtq | pacman -Rns - --noconfirm  || true
-pacman -Scc --noconfirm
-
-#yay AUR
-git clone "https://aur.archlinux.org/yay-bin.git"
-git clone "https://aur.archlinux.org/topgrade-bin.git"
-
-#end
-echo "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf | Reinicie o sistema, amigão"
+#######--------############
