@@ -139,7 +139,6 @@ alias upgd="pkg upgrade"
 alias ouvir="mpv --no-video --ytdl-format='bestaudio[acodec^=opus]'"
 alias ver="mpv --ytdl-format='bestvideo[height<=720][vcodec^=avc1]+bestaudio[acodec^=opus]'"
 PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[\e[1;93m\]\w\[\e[0m\]\n\[\e[38;5;46m\]╰➜\[\e[0m\] $ '
-# PS1='[\u@\h \W]$'
 EOF
 }
 
