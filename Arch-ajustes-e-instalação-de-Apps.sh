@@ -22,7 +22,7 @@ echo "instalando amd-ucode..."
 pacman -S amd-ucode --noconfirm
 
 #Verificando se há grub no sistema e, caso não venha a ter, o comando é ignorado
-if command -v &>/dev/null; then
+if command -v grub-mkconfig &>/dev/null; then
 grub-mkconfig -o /boot/grub/grub.cfg
 else
  echo "GRUB não instalado, ignorando configuração"
@@ -119,7 +119,7 @@ fs.file-max = 2097152
 EOF
 
 #Udev rules
-cat <<'EOF' > /etc/udev/rules.d/20-áudio-pm.rules
+cat <<'EOF' > /etc/udev/rules.d/20-audio-pm.rules
 # Disables power saving capabilities for snd-hda-intel when device is not
 # running on battery power. This is needed because it prevents audio cracks on
 # some hardware.
@@ -147,7 +147,7 @@ EOF
 #Journal
 mkdir -p /etc/systemd/journal.conf.d
 echo -e "[Journal]
-SystemMaxUse=50M" > /etc/systemd/journal.conf.d
+SystemMaxUse=50M" > /etc/systemd/journal.conf.d/size.conf
 
 #Melhora de performance em aplicativos que usam tcmalloc
 cat <<'EOF' > /etc/tmpfiles.d/thp.conf
