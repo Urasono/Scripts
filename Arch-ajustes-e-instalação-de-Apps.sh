@@ -177,6 +177,41 @@ EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --
 EOF
 }
 
+cleanup_system() {
+  log "Limpando Sistema"
+
+  pacdiff || true
+pacman -Qdtq | pacman -Rns - --noconfirm  || true
+pacman -Scc --noconfirm
+}
+
+#--------------------MAIN---------------------------
+
+main() {
+    require_root
+
+    update_system
+    install_microcode
+    configure_grub
+
+    configure_keyboard
+    configure_sysctl
+    configure_journal
+    configure_zram
+    configure_swapfile
+    configure_bashrc
+    install_base_packages
+    install_extra_packages
+
+    enable_services
+    cleanup_system
+
+    log "Instale o dnsmasq e habilite ou descomente domain-needed, bogus-priv e bind-interface em /etc/dnsmasq.conf | Reinicie o sistema, amigão"
+}
+
+main "$@"
+
+#######------#####
 
 
 #Bashrc
