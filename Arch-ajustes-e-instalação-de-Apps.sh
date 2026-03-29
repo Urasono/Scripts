@@ -53,15 +53,22 @@ configure_grub() {
 else
    warn "GRUB não instalado, ignorando configuração..."
  fi
- }
+}
 
 #--------------------CONFIGURAÇÕES------------------------------
+
+#configure_performance() {
+
+#  cat <<'EOF' >> /etc/default/grub
+  
 #Maximizar performance do SSD se houver no sistema
 
 # SATA Active Link Power Management
 #echo "ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", \
 #    ATTR{link_power_management_policy}=="*", \
-#    ATTR{link_power_management_policy}="max_performance"" > /etc/default/grub
+#    ATTR{link_power_management_policy}="max_performance"
+#EOF
+#}
 
 configure_sysctl() {
 
@@ -377,6 +384,7 @@ main() {
     configure_music_server
     configure_Disk_scaler
     configure_shader_booster
+    configure_performance
     configure_cpu_power
     configure_open_source_nvidia_drivers
     configure_proprietary_nvidia_drivers
