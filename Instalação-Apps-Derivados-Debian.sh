@@ -12,6 +12,14 @@ warn() {
 echo -e "\e[1;33m[WARN]\e[0m $1"
 }
 
+required_root() {
+
+  if [[ $EUID -ne 0 ]]; then
+  warn "Você precisa de root!"
+exit 1
+fi
+}
+
 System_Update() {
 
   apt update && apt upgrade
@@ -60,6 +68,7 @@ System_Clean() {
 
 main() {
 
+  required_root
   System_Update
   Install_Packages
   Install_Flatpak
