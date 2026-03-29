@@ -1,43 +1,73 @@
-#!/bin/bash  
- #Apps to install Script
- 
- # System Update
- sudo apt update
- 
- #apps
- sudo apt install -y ncdu
- sudo apt install -y keepassxc
- sudo apt install -y mpv
- sudo apt install -y kdeconnect
- sudo apt install -y neofetch
- sudo apt install -y qbittorrent
+#!/usr/bin/env bash
 
- #Flatpak Update
+log() {
+echo -e "\e[1;32m[INFO]\e[0m $1"
+}
 
- #Flatpak Apps
- ## Tor Browser
- flatpak install flathub org.torproject.torbrowser-launcher -y
- ## Onlyoffice
- flatpak install flathub org.onlyoffice.desktopeditors
+error() {
+echo -e "\e[1;31m[ERRO]\e[0m $1"
+}
 
- # Flatpak Clean Up
- flatpak uninstall --delete-data -y
- flatpak uninstall --unused -y
+warn() {
+echo -e "\e[1;33m[WARN]\e[0m $1"
+}
 
- # Snap Update
- sudo snap refresh
+System_Update() {
 
- # Snap Clean Up
- sudo rm -rf /var/lib/snapd/cache/*
+  apt update && apt upgrade
+}
 
- #System Update and Upgrade
- sudo apt update
- sudo apt install --fix-missing -y
+Install_Packages() {
 
- #System Clean
- sudo apt install -f
- sudo apt autoremove -y
- sudo apt autoclean
- sudo apt clean
+   apt install -y \
+keepassxc mpv kdeconnect neofetch qbittorrent
+}
 
-  #End
+Install_Flatpak() {
+
+  flatpak install flathub org.torproject.torbrowser-launcher -y
+  flatpak install flathub org.onlyoffice.desktopeditors
+}
+
+Flatpak_Clean_Up() {
+  flatpak uninstall --delete-data -y
+  flatpak uninstall --unused -y
+}
+
+Snap_Update() {
+
+  sudo snap refresh
+}
+
+Snap_Clean_Up() {
+
+  sudo rm -rf /var/lib/snapd/cache/*
+}
+
+Update_System() {
+
+  sudo apt update
+  sudo apt install --fix-missing -y
+}
+
+System_Clean() {
+
+  sudo apt install -f
+  sudo apt autoremove -y
+  sudo apt autoclean
+  sudo apt clean
+}
+
+main() {
+
+  System_Update
+  Install_Packages
+  Install_Flatpak
+  Flatpak_Clean_Up
+  Snap_Update
+  Snap_Clean_Up
+  Update_System
+  System_Clean
+}
+
+main "$@"
