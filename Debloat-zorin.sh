@@ -1,42 +1,65 @@
-     #!/bin/bash
+#!/usr/bin/env bash
+#--------------------------------
+#setup Script
 
-     #setup Script
+#uninstall Bloatware Apps
 
-     #uninstall Bloatware Apps
+log() {
+echo -e "\e[1;32m[INFO]\e[0m $1"
+}
 
-     sudo apt --purge remove -y gnome-weather
-     sudo apt --purge remove -y simple-scan
-     sudo apt --purge remove -y brasero
-     sudo apt --purge remove -y gnome-power-manager
-     sudo apt --purge remove -y gnome-maps
-     sudo apt --purge remove -y zorin-connect
-     sudo apt --purge remove -y gnome-music
-     sudo apt --purge remove -y rhythmbox
-     sudo apt --purge remove -y gnome-contacts
-     sudo apt --purge remove -y gnome-connections
-     sudo apt --purge remove -y baobab
-     sudo apt --purge remove -y gnome-characters
-     sudo apt --purge remove -y gnome-photos
-     sudo apt --purge remove -y malcontent
-     sudo apt --purge remove -y remmina
-     sudo apt --purge remove -y gnome-camera*
+warn() {
+echo -e "\e[1;33m[WARN]\e[0m $1"
+}
 
-     # System Update and upgrade
-     sudo apt update
-     sudo apt install --fix-missing -y
-     sudo apt upgrade -y
+error() {
+echo -e "\e[1;31m[ERRO]\e[0m $1"
+}
 
-     #system disable unit-files
-     sudo systemctl disable cups.service
+required_root() {
 
-    #System clean Up
-     sudo apt install -f
-     sudo apt autoremove --purge -y
-     sudo apt autoclean
-     sudo apt clean
+  if [[ $EUID -ne 0 ]]; then
+  warn "Você precisa de root!"
+exit 1
+fi
+}
 
-     # End of Script
+uninstall_packages() {
 
-    # Display installation Complete Message
+  log "Desinstalando pacotes..."
+
+  apt --purge remove -y \
+gnome-weather simple-scan brasero gnome-power-manager gnome-maps zorin-connect gnome-music rhythmbox \
+gnome-contacts gnome-connections baobab gnome-characters gnome-photos malcontent remmina gnome-camera*
+}
+
+update_system() {
+
+  apt update && apt upgrade
+  apt install --fix-missing -y
+}
+
+disable_unit_files() {
+
+  systemctl disable cups.service
+}
+
+System_clean_up() {
+
+  apt install -f
+  apt autoremove --purge -y
+  apt autoclean && apt clean
+}
+
     echo "All good now!!"
     echo "please, restart the computer."
+
+main(){
+
+  uninstall_packages
+  update_system
+  disable_unit_files
+  System_clean_up
+}
+
+main "$@"
