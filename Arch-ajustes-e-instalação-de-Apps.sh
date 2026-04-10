@@ -83,6 +83,7 @@ kernel.printk = 3 3 3 3
 net.core.netdev_max_backlog = 4096
 fs.file-max = 2097152
 vm.page-cluster = 0
+vm.max_map_count=524288
 EOF
 }
 
