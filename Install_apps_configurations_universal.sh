@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #-------------------------------------------------------------
 # Nome: Universal Linux Setup
-# Base: Script original do Urasono (refatorado)
 # Suporte: Arch | Debian/Ubuntu | Fedora
 #-------------------------------------------------------------
 
