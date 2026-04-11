@@ -137,16 +137,24 @@ configure_bashrc() {
   log "configurando .bashrc"
 
   cat <<'EOF' > ~/.bashrc
+# If not running interactively, don't do anything
 [[ himBHs != *i* ]] && return
-alias ls="ls --color=auto"
+alias ls='ls --color=auto'
 alias l="ls -l"
 alias la="ls -a"
-alias up="apt upgrade"
-alias upgd="pkg upgrade"
+alias up="pacman -Syu"
 alias ouvir="mpv --no-video --ytdl-format='bestaudio[acodec^=opus]'"
 alias ver="mpv --ytdl-format='bestvideo[height<=720][vcodec^=avc1]+bestaudio[acodec^=opus]'"
 PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[\e[1;93m\]\w\[\e[0m\]\n\[\e[38;5;46m\]╰➜\[\e[0m\] $ '
-EOF
+# PS1='[\u@\h \W]$ '
+
+check() {
+    if [ $# -eq 0 ]; then
+        echo "Uso: check arquivo.py"
+        return 1
+    fi
+
+    black "$@" && flake8 "$@"
 }
 
 configure_udev_rules() {
