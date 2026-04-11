@@ -1,4 +1,8 @@
-#!/usr/bin/env python3                          # ----------------------------------------------
+#!/usr/bin/env python3
+#------------------------------------------------------------------------------------------------------------------------------
+#Desc:Programa em python que lista, verifica e envia comandos para resolver um problema comum com controles genéricos no linux.
+#Autor:Urasono
+#Versão:1.0
 
 import usb.core
 import usb.util
