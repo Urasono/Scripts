@@ -137,23 +137,16 @@ configure_bashrc() {
   log "configurando .bashrc"
 
   cat <<'EOF' > ~/.bashrc
-# If not running interactively, don't do anything
 [[ himBHs != *i* ]] && return
-alias ls='ls --color=auto'
+alias ls="ls --color=auto"
 alias l="ls -l"
 alias la="ls -a"
-alias up="pacman -Syu"
+alias up="apt upgrade"
+alias upgd="pkg upgrade"
 alias ouvir="mpv --no-video --ytdl-format='bestaudio[acodec^=opus]'"
 alias ver="mpv --ytdl-format='bestvideo[height<=720][vcodec^=avc1]+bestaudio[acodec^=opus]'"
 PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[\e[1;93m\]\w\[\e[0m\]\n\[\e[38;5;46m\]╰➜\[\e[0m\] $ '
-# PS1='[\u@\h \W]$ '
-
-    if [ $# -eq 0 ]; then
-        echo "Uso: check arquivo.py"
-        return 1
-    fi
-
-    black "$@" && flake8 "$@"
+EOF
 }
 
 configure_udev_rules() {
@@ -275,7 +268,7 @@ EOF
 #cat <<'EOF' > ~/.profile
 # increase Nvidia shader cache size to 12GB
 #export __GL_SHADER_DISK_CACHE_SIZE=12000000000
-EOF
+#EOF
 }
 
 configure_cpu_power() {
