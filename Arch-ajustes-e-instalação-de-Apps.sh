@@ -31,7 +31,7 @@ required_root() {
 }
 
 command_exists() {
-  command -v "$1" &>/devil/null
+  command -v "$1" &>/dev/null
 }
 
 #---------------SISTEMA----------------------------
@@ -41,7 +41,7 @@ update_system() {
   pacman -Syu --needed archlinux-keyring --noconfirm
 }
 
-install_microcide() {
+install_microcode() {
   log "instalando amd-ucode..."
   pacman -S amd-ucode --noconfirm || warn "Falha ao instalar AMD-ucode"
 }
@@ -60,7 +60,7 @@ else
 #configure_performance() {
 
 #  cat <<'EOF' >> /etc/default/grub
-  
+
 #Maximizar performance do SSD se houver no sistema
 
 # SATA Active Link Power Management
@@ -100,9 +100,9 @@ EOF
 
 configure_zram() {
   log "Configurando Zram"
-  
+
   pacman -S zram-generator --noconfirm
-  
+
   cat <<'EOF' > /etc/systemd/zram-generator.conf
 [zram0]
 zram-size = min(ram / 2, 8192)
@@ -114,7 +114,7 @@ systemctl enable --now systemd-zram-setup@zram0.service
 
 configure_swapfile() {
   log "criando swapfile"
-  
+
   if [[ ! -f /swapfile ]]; then
   fallocate -l 4G /swapfile
   chmod 600 /swapfile
@@ -127,13 +127,13 @@ fi
 
 configure_keyboard() {
   log "configurando teclado.."
-  
+
   setxkbmap -model abnt2 -layout br || true
   loadkeys br-abnt2 || true
 }
 
 configure_bashrc() {
-  
+
   log "configurando .bashrc"
 
   cat <<'EOF' > ~/.bashrc
@@ -204,7 +204,7 @@ EOF
 #Navidrome
 #mkdir -p ~/navidrome/músicas ~/navidrome/dados && cd ~/navidrome
   #cat <<'EOF' > ~/docker-compose.yml
-  
+
   #  navidrome:
 #    image: deluan/navidrome:latest
 #    user: 1000:1000 # Isso garante que o servidor tenha acesso aos seus arquivos
@@ -337,7 +337,7 @@ install_optional_packages() {
 #chmod +x openrgb-udev-install.sh
 #bash openrgb-udev-install.sh
 #cd ../
-wget "https://sourceforgeprojects/ventoy/files/v1.1.10/ventoy-1.1.10-linux.tar.gz/download" -O Ventoy.tar.gz
+wget "https://sourceforge.net/projects/ventoy/files/v1.1.11/ventoy-1.1.11-linux.tar.gz/download" -O Ventoy.tar.gz
 mkdir Ventoy
 tar -xvf Ventoy.tar.gz -C Ventoy/
 rm ./*Ventoy.tar.gz
@@ -345,9 +345,9 @@ rm ./*Ventoy.tar.gz
 
 enable_services() {
   log "Habilitando serviços"
- 
+
   systemctl enable --now paccache.timer || true
-  
+
   pacman -S earlyoom --noconfirm
 cat <<'EOF' > /etc/default/earlyoom 
 EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$'
