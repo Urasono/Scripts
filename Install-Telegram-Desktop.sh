@@ -16,7 +16,7 @@ ARQUIVO_TAR="telegram.tar.xz"
 INSTALL_DIR="$HOME/.local/opt/telegram"
 LINK_PATH="$HOME/.local/bin/telegram"
 BIN_PATH="$INSTALL_DIR/Telegram"
-DESKTOP_FILE="$home/.local/share/applications/telegramdesktop.desktop"
+DESKTOP_FILE="$HOME/.local/share/applications/telegramdesktop.desktop"
 
 #Criação do diretório
 
@@ -50,7 +50,7 @@ if [ -d "$INSTALL_DIR" ]; then
 
   echo "------------------------------------------"
 
-  printf "Opção: " acao
+  printf "Opção: "
   read -r acao
   case $acao in
 2)
@@ -73,7 +73,7 @@ fi
 #Atalho
 
 if [ -f "$DESKTOP_FILE" ]; then
-  rm -rf "DESKTOP_FILE"
+  rm -rf "$DESKTOP_FILE"
   echo "Atalho removido"
 fi
 
@@ -81,13 +81,13 @@ fi
 exit 0
 ;;
 
-0)
+*)
 
   echo "saindo.."
 exit 0
 ;;
 
-*)
+1)
 
   echo "---> Iniciando processo de atualização..."
 ;;
@@ -130,8 +130,8 @@ create_simbolic_link_mv_dir_clean() {
 #4. Link Simbólico
 
   echo "Criando link Simbólico..."
-  ln -sf "$BIN-PATH" "$LINK_PATH"
-  chmod +x "BIN_PATH"
+  ln -sf "$BIN_PATH" "$LINK_PATH"
+  chmod +x "$BIN_PATH"
 
 #5. Limpeza
 
