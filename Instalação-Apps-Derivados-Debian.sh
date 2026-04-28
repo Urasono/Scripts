@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+#----------------------------------------------
+#Nome: Instalação de apliactivos derivados do Debian
+#Autor: Urasono
+#Mantendedor: Urasono
+#Versão: 1.0
 
 log() {
 echo -e "\e[1;32m[INFO]\e[0m $1"
