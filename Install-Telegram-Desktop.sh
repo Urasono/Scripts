@@ -81,7 +81,7 @@ fi
 exit 0
 ;;
 
-*)
+3)
 
   echo "saindo.."
 exit 0
