@@ -10,6 +10,13 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+check_internet() {
+    ping -c 1 archlinux.org &>/dev/null || {
+        error "Sem conexão com internet"
+        exit 1
+    }
+}
+
 #------------------FUNÇÕES---------------
 log() {
   echo -e "\e[1;32m[INFO]\e[0m $1"
@@ -38,12 +45,17 @@ command_exists() {
 
 update_system() {
   log "atualizando sistema"
-  pacman -Syu --needed archlinux-keyring --noconfirm
+  pacman -Sy --needed archlinux-keyring --noconfirm
+  pacman -Su --noconfirm
 }
 
 install_microcode() {
-  log "instalando amd-ucode..."
-  pacman -S amd-ucode --noconfirm || warn "Falha ao instalar AMD-ucode"
+  log "instalando microcode"
+    if grep -qi amd /proc/cpuinfo; then
+        pacman -S --noconfirm amd-ucode || warn "Falha ao instalar AMD-ucode"
+    elif grep -qi intel /proc/cpuinfo; then
+        pacman -S --noconfirm intel-ucode || warn "Falha ao instalar INTEL-ucode"
+    fi
 }
 
 configure_grub() {
@@ -58,6 +70,13 @@ else
 #--------------------CONFIGURAÇÕES------------------------------
 
 #configure_performance() {
+
+ENABLE_PERFORMANCE=false
+
+  if [[ "$ENABLE_PERFORMANCE" == true ]];
+then
+   configure_performance
+fi
 
 #  cat <<'EOF' >> /etc/default/grub
 
@@ -123,6 +142,8 @@ configure_swapfile() {
 else
   warn "swapfile já existe, nada a fazer"
 fi
+  grep -q '/swapfile' /etc/fstab || \
+echo '/swapfile none swap defaults 0 0' >> /etc/fstab
 }
 
 configure_keyboard() {
@@ -137,15 +158,15 @@ configure_bashrc() {
   log "configurando .bashrc"
 
   cat <<'EOF' > ~/.bashrc
-[[ himBHs != *i* ]] && return
+[[ $- != *i* ]] && return
 alias ls="ls --color=auto"
 alias l="ls -l"
 alias la="ls -a"
-alias up="apt upgrade"
-alias upgd="pkg upgrade"
+alias up="pacman -Sy"
+alias upgd="pkg -Syu"
 alias ouvir="mpv --no-video --ytdl-format='bestaudio[acodec^=opus]'"
 alias ver="mpv --ytdl-format='bestvideo[height<=720][vcodec^=avc1]+bestaudio[acodec^=opus]'"
-PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[\e[1;93m\]\w\[\e[0m\]\n\[\e[38;5;46m\]╰➜\[\e[0m\] $ '
+PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[[1;93m\]\w\[\e[0m\]\n\[\e[38;5;46m\]╰➜\[\e[0m\] $ '
 EOF
 }
 
@@ -190,6 +211,12 @@ EOF
 }
 
 #configure_music_server() {
+ENABLE_MUSIC_SERVER=false
+
+  if [[ "$ENABLE_MUSIC_SERVER" == true ]];
+then
+   configure_music_server
+fi
 
 #  log "configurando docker e navidrome"
 
@@ -227,7 +254,7 @@ EOF
 #yt-dlp -x --audio-format opus --audio-quality 0 --add-metadata --embed-thumbnail --parse-metadata "playlist_index:%(track_number)s" -o "~/navidrome/musicas/%(artist)s/%(album)s/%(playlist_index)s - %(title)s.%(ext)s" "URL_DA_PLAYLIST" && cd ~/
 #}
 
-configure_oficial_script_homebrew() {
+configure_homebrew() {
 
   log "baixando e executando o script"
 
@@ -239,7 +266,7 @@ configure_oficial_script_homebrew() {
 EOF
 }
 
-configure_Disk_scaler() {
+configure_disk_scheduler() {
   log "configurando escalonador de disco"
 
   cat <<'EOF' > /etc/udev/rules.d/60-ioschedulers.rules
@@ -256,7 +283,7 @@ configure_shader_booster() {
 
   log "configurando shader booster"
 
-  cat <<'EOF' > ~/.profile
+  cat <<'EOF' >> ~/.profile
 # enforce RADV vulkan implementation for AMD GPUs
 export AMD_VULKAN_ICD=RADV
 
@@ -265,7 +292,7 @@ export MESA_SHADER_CACHE_MAX_SIZE=12G
 EOF
 
 # Aumentar o cache de shader para NVIDIA e intel
-#cat <<'EOF' > ~/.profile
+#cat <<'EOF' >> ~/.profile
 # increase Nvidia shader cache size to 12GB
 #export __GL_SHADER_DISK_CACHE_SIZE=12000000000
 #EOF
@@ -338,7 +365,7 @@ install_optional_packages() {
 #bash openrgb-udev-install.sh
 #cd ../
 wget "https://sourceforge.net/projects/ventoy/files/v1.1.11/ventoy-1.1.11-linux.tar.gz/download" -O Ventoy.tar.gz
-mkdir Ventoy
+mkdir -p "Ventoy"
 tar -xvf Ventoy.tar.gz -C Ventoy/
 rm ./*Ventoy.tar.gz
 }
@@ -349,17 +376,18 @@ enable_services() {
   systemctl enable --now paccache.timer || true
 
   pacman -S earlyoom --noconfirm
-cat <<'EOF' > /etc/default/earlyoom 
+cat <<'EOF' > /etc/default/earlyoom
 EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$'
 EOF
 }
 
 cleanup_system() {
   log "Limpando Sistema"
+orphans=$(pacman -Qdtq || true)
 
-  pacdiff || true
-pacman -Qdtq | pacman -Rns - --noconfirm  || true
-pacman -Scc --noconfirm
+if [[ -n "$orphans" ]]; then
+    pacman -Rns "$orphans" --noconfirm
+fi
 }
 
 aur_git_clone() {
@@ -376,21 +404,22 @@ configure_dnsmaq() {
 main() {
     required_root
 
+    check_internet
     update_system
     install_microcode
     configure_grub
     configure_udev_rules
     configure_tmpfiles
     configure_keyboard
-    configure_music_server
-    configure_Disk_scaler
-    configure_shader_booster
+    configure_Disk_scheduler
     configure_performance
+    configure_music_server
+    configure_shader_booster
     configure_cpu_power
     configure_open_source_nvidia_drivers
     configure_proprietary_nvidia_drivers
     configure_flatpak
-    configure_oficial_script_homebrew
+    configure_homebrew
     configure_sysctl
     configure_journal
     configure_zram
