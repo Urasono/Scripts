@@ -10,9 +10,9 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # ----------------- Helpers -----------------
-log() { printf \'\e[1;32m[INFO]\e[0m %s\n\' "$1"; }
-warn() { printf \'\e[1;33m[WARN]\e[0m %s\n\' "$1"; }
-error() { printf \'\e[1;31m[ERRO]\e[0m %s\n\' "$1" >&2; }
+log() { printf '\033[1;32m[INFO]\033[0m %s\n' "$1"; }
+warn() { printf '\033[1;33m[WARN]\033[0m %s\n' "$1"; }
+error() { printf '\033[1;31m[ERRO]\033[0m %s\n' "$1" >&2; }
 
 required_root() {
   if [[ $EUID -ne 0 ]]; then
@@ -53,23 +53,23 @@ detect_gpu() {
   fi
 
   if grep -qi nvidia <<< "$pci"; then
-    echo "nvidia"; return
+    printf '%s\n' "nvidia"; return
   fi
   if grep -Eqi "amd|advanced micro devices" <<< "$pci"; then
-    echo "amd"; return
+    printf '%s\n' "amd"; return
   fi
   if grep -Eqi "intel" <<< "$pci"; then
-    echo "intel"; return
+    printf '%s\n' "intel"; return
   fi
 
   # Try kernel drivers for drm
   if [[ -d /sys/class/drm ]]; then
     if ls /sys/class/drm/card* 2>/dev/null | xargs -r -n1 basename | grep -q "card0"; then
-      if grep -qi nvidia /proc/modules 2>/dev/null; then echo "nvidia"; return; fi
+      if grep -qi nvidia /proc/modules 2>/dev/null; then printf '%s\n' "nvidia"; return; fi
     fi
   fi
 
-  echo "unknown"
+  printf '%s\n' "unknown"
 }
 
 # ----------------- System actions -----------------
@@ -148,7 +148,7 @@ configure_swapfile() {
   else
     warn "swapfile já existe"
   fi
-  grep -q '/swapfile' /etc/fstab || echo '/swapfile none swap defaults 0 0' >> /etc/fstab
+  grep -Fq '/swapfile' /etc/fstab || echo '/swapfile none swap defaults 0 0' >> /etc/fstab
 }
 
 configure_keyboard() {
@@ -209,15 +209,45 @@ EOF
 }
 
 configure_shader_booster() {
-  log "Aplicando variáveis de ambiente para caches de shader"
-  mkdir -p /etc/profile.d
-  cat <<'EOF' > /etc/profile.d/shader_cache.sh
-# enforce RADV vulkan implementation for AMD GPUs
-export AMD_VULKAN_ICD=RADV
+  log "Aplicando variáveis de ambiente para cache de shader"
 
-# increase shader cache size
+  mkdir -p /etc/profile.d
+
+  local gpu_vendor
+  gpu_vendor="$(lspci | grep -Ei 'vga|3d|display' || true)"
+
+  cat <<'EOF' > /etc/profile.d/shader_cache.sh
+# Shader cache global
 export MESA_SHADER_CACHE_MAX_SIZE=12G
+export MESA_SHADER_CACHE_DISABLE=false
+export mesa_glthread=true
 EOF
+
+  if printf '%s\n' "$gpu_vendor" | grep -qi "amd"; then
+    cat <<'EOF' >> /etc/profile.d/shader_cache.sh
+
+# AMD RADV
+export AMD_VULKAN_ICD=RADV
+export RADV_PERFTEST=gpl
+EOF
+
+  elif printf '%s\n' "$gpu_vendor" | grep -qi "intel"; then
+    cat <<'EOF' >> /etc/profile.d/shader_cache.sh
+
+# Intel Mesa
+export mesa_glthread=true
+EOF
+
+  elif printf '%s\n' "$gpu_vendor" | grep -qi "nvidia"; then
+    cat <<'EOF' >> /etc/profile.d/shader_cache.sh
+
+# NVIDIA shader cache
+export __GL_SHADER_DISK_CACHE=1
+export __GL_SHADER_DISK_CACHE_SIZE=12000000000
+EOF
+  fi
+
+  chmod +x /etc/profile.d/shader_cache.sh
 }
 
 configure_disk_scheduler() {
@@ -271,8 +301,8 @@ install_extra_packages() {
 
 install_optional_packages() {
   log "Tarefas opcionais (Ventoy exemplo)"
-  mkdir -p /tmp/Ventoy && cd /tmp/Ventoy
-  wget -q "https://sourceforge.net/projects/ventoy/files/v1.1.11/ventoy-1.1.11-linux.tar.gz/download" -O Ventoy.tar.gz || { warn "wget falhou"; return; }
+  mkdir -p /tmp/Ventoy && cd /tmp/Ventoy || return
+  wget -q --show-progress "https://sourceforge.net/projects/ventoy/files/v1.1.11/ventoy-1.1.11-linux.tar.gz/download" -O Ventoy.tar.gz || { warn "wget falhou"; return; }
   tar -xzf Ventoy.tar.gz || warn "tar falhou"
   cd - >/dev/null
 }
@@ -288,43 +318,45 @@ EOF
 
 cleanup_system() {
   log "Removendo dependências órfãs"
-  orphans=$(pacman -Qdtq || true)
+ local orphans
+ orphans=$(pacman -Qdtq || true)
   if [[ -n "$orphans" ]]; then
-    pacman -Rns --noconfirm -- $orphans || warn "Falha ao remover órfãos"
+    pacman -Rns --noconfirm -- "${orphans}" || warn "Falha ao remover órfãos"
   fi
 }
 
 aur_git_clone() {
   log "Clonando alguns AUR helpers (em /tmp)"
-  cd /tmp
+  cd /tmp || return
   git clone https://aur.archlinux.org/yay-bin.git || warn "Não clonou yay"
   git clone https://aur.archlinux.org/topgrade-bin.git || warn "Não clonou topgrade"
 }
 
-# ----------------- Interactive menu -----------------
+# ----------------- Interactive menu ----------
+
 interactive_drivers() {
   local gpu
   gpu=$(detect_gpu)
   log "GPU detectada: $gpu"
   case "$gpu" in
     nvidia)
-      echo "Opções para NVIDIA:"
+      printf '%s\n' "Opções para NVIDIA:"
       PS3="Escolha uma opção: "
       select opt in "Proprietário (recomendado)" "Open (nouveau)" "Cancelar"; do
         case $REPLY in
           1) install_nvidia_proprietary; break;;
           2) install_nvidia_open; break;;
           3) break;;
-          *) echo "Opção inválida";;
+          *) printf '%s\n' "Opção inválida";;
         esac
       done
       ;;
     amd)
-      echo "Instalando drivers AMD (mesa)"
+      printf '%s\n' "Instalando drivers AMD (mesa)"
       install_amd_drivers
       ;;
     intel)
-      echo "Instalando drivers Intel (mesa)"
+      printf '%s\n' "Instalando drivers Intel (mesa)"
       install_intel_drivers
       ;;
     *)
@@ -364,7 +396,7 @@ main_menu() {
         break
         ;;
       6) log "Saindo"; exit 0;;
-      *) echo "Opção inválida";;
+      *) printf '%s\n' "Opção inválida";;
     esac
   done
 }
@@ -405,10 +437,7 @@ main() {
   main_menu
 }
 
-main "$@"
-
-
-# ----------------- Missing functions fixed -----------------
+# ----------------- Missing functions fixed ----
 configure_cpu_power() {
   log "Configuração de CPU power placeholder"
   return 0
@@ -424,7 +453,8 @@ configure_flatpak() {
   fi
 
   if ! flatpak remote-list | grep -q flathub; then
-    flatpak remote-add --if-not-exists flathub \
-      https://flathub.org/repo/flathub.flatpakrepo || warn "Falha ao adicionar flathub"
+    flatpak remote-add --if-not-exists flathub \ https://flathub.org/repo/flathub.flatpakrepo || warn "Falha ao adicionar flathub"
   fi
 }
+
+main "$@"
