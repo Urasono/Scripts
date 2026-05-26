@@ -1,0 +1,430 @@
+#!/usr/bin/env bash
+#-------------------------------------------------------------
+#Nome: Arch Ajustes e instalação de apps (interativo)
+#Descrição: Ajustes no Arch linux e instalação de aplicativos (interativo)
+#Autor: Urasono (modificado)
+#Versão: 1.1
+#-------------------------------------------------------------
+
+set -euo pipefail
+IFS=$'\n\t'
+
+# ----------------- Helpers -----------------
+log() { printf \'\e[1;32m[INFO]\e[0m %s\n\' "$1"; }
+warn() { printf \'\e[1;33m[WARN]\e[0m %s\n\' "$1"; }
+error() { printf \'\e[1;31m[ERRO]\e[0m %s\n\' "$1" >&2; }
+
+required_root() {
+  if [[ $EUID -ne 0 ]]; then
+    error "Você precisa ser root!"
+    exit 1
+  fi
+}
+
+command_exists() { command -v "$1" &>/dev/null; }
+
+check_internet() {
+  if ! ping -c 1 archlinux.org &>/dev/null; then
+    error "Sem conexão com internet"
+    return 1
+  fi
+  return 0
+}
+
+confirm() {
+  local prompt="$1"
+  local default=${2:-n}
+  local ans
+  read -r -p "$prompt [y/N]: " ans || return 1
+  case "$ans" in
+    [Yy]*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+# ----------------- Hardware detection -----------------
+# Detecta GPU principal e retorna: "nvidia", "amd", "intel", or "unknown"
+detect_gpu() {
+  local pci
+  if command_exists lspci; then
+    pci=$(lspci -nnk | grep -E "VGA|3D" -i || true)
+  else
+    pci=""
+  fi
+
+  if grep -qi nvidia <<< "$pci"; then
+    echo "nvidia"; return
+  fi
+  if grep -Eqi "amd|advanced micro devices" <<< "$pci"; then
+    echo "amd"; return
+  fi
+  if grep -Eqi "intel" <<< "$pci"; then
+    echo "intel"; return
+  fi
+
+  # Try kernel drivers for drm
+  if [[ -d /sys/class/drm ]]; then
+    if ls /sys/class/drm/card* 2>/dev/null | xargs -r -n1 basename | grep -q "card0"; then
+      if grep -qi nvidia /proc/modules 2>/dev/null; then echo "nvidia"; return; fi
+    fi
+  fi
+
+  echo "unknown"
+}
+
+# ----------------- System actions -----------------
+update_system() {
+  log "Atualizando sistema"
+  pacman -Sy --needed archlinux-keyring --noconfirm || warn "Falha ao atualizar keyring"
+  pacman -Su --noconfirm || warn "Falha em pacman -Su"
+}
+
+install_microcode() {
+  log "Instalando microcode se aplicável"
+  if grep -qi amd /proc/cpuinfo 2>/dev/null; then
+    pacman -S --needed --noconfirm amd-ucode || warn "Falha ao instalar amd-ucode"
+  elif grep -qi intel /proc/cpuinfo 2>/dev/null; then
+    pacman -S --needed --noconfirm intel-ucode || warn "Falha ao instalar intel-ucode"
+  fi
+}
+
+configure_grub() {
+  if command_exists grub-mkconfig; then
+    log "Atualizando GRUB..."
+    grub-mkconfig -o /boot/grub/grub.cfg || warn "Falha ao gerar grub.cfg"
+  else
+    warn "GRUB não instalado, ignorando configuração..."
+  fi
+}
+
+configure_sysctl() {
+  log "Configurando /etc/sysctl.d/99-custom.conf"
+  cat <<'EOF' > /etc/sysctl.d/99-custom.conf
+kernel.split_lock_mitigate=0
+vm.swappiness=100
+vm.vfs_cache_pressure=50
+vm.dirty_bytes=268435456
+kernel.nmi_watchdog=0
+kernel.printk=3 3 3 3
+net.core.netdev_max_backlog=4096
+fs.file-max=2097152
+vm.page-cluster=0
+vm.max_map_count=524288
+EOF
+}
+
+configure_journal() {
+  log "Limitando journal"
+  mkdir -p /etc/systemd/journal.conf.d
+  cat <<'EOF' >/etc/systemd/journal.conf.d/size.conf
+[Journal]
+SystemMaxUse=50M
+EOF
+}
+
+configure_zram() {
+  log "Configurando zram (zram-generator)"
+  pacman -S --needed --noconfirm zram-generator || { warn "Não foi possível instalar zram-generator"; return; }
+  cat <<'EOF' > /etc/systemd/zram-generator.conf
+[zram0]
+zram-size = min(ram / 2, 8192)
+compression-algorithm = zstd
+EOF
+  # Enable generator-managed unit (systemd will create the setup unit)
+  systemctl daemon-reload || true
+}
+
+configure_swapfile() {
+  log "Criando swapfile em /swapfile se não existir"
+  if [[ ! -f /swapfile ]]; then
+    if command_exists fallocate; then
+      fallocate -l 4G /swapfile || { warn "fallocate falhou, usando dd"; dd if=/dev/zero of=/swapfile bs=1M count=4096; }
+    else
+      dd if=/dev/zero of=/swapfile bs=1M count=4096
+    fi
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+  else
+    warn "swapfile já existe"
+  fi
+  grep -q '/swapfile' /etc/fstab || echo '/swapfile none swap defaults 0 0' >> /etc/fstab
+}
+
+configure_keyboard() {
+  log "Configurando teclado (setxkbmap/loadkeys)"
+  setxkbmap -model abnt2 -layout br 2>/dev/null || true
+  loadkeys br-abnt2 2>/dev/null || true
+}
+
+configure_bashrc() {
+  log "Atualizando ~/.bashrc (sobrescreve o arquivo do usuário atual)"
+  cat <<'EOF' > ~/.bashrc
+[[ $- != *i* ]] && return
+alias ls="ls --color=auto"
+alias l="ls -l"
+alias la="ls -a"
+alias up="pacman -Sy"
+alias upgd="pkg -Syu"
+alias ouvir="mpv --no-video --ytdl-format='bestaudio[acodec^=opus]'"
+alias ver="mpv --ytdl-format='bestvideo[height<=720][vcodec^=avc1]+bestaudio[acodec^=opus]'"
+PS1='\[\e[1;95m\]\u@\h\[\e[0m\] \[\e[1;93m\]\w\[\e[0m\]\n\[\e[38;5;46m\]╰➜\[\e[0m\] $ '
+EOF
+}
+
+configure_udev_rules() {
+  log "Escrevendo regras udev úteis"
+  mkdir -p /etc/udev/rules.d
+  cat <<'EOF' > /etc/udev/rules.d/20-audio-pm.rules
+# Disables power saving capabilities for snd-hda-intel when device is not
+# running on battery power. This is needed because it prevents audio cracks on
+# some hardware.
+ACTION=="add", SUBSYSTEM=="sound", KERNEL=="card*", DRIVERS=="snd_hda_intel", TEST!="/run/udev/snd-hda-intel-powersave", \
+    RUN+="/usr/bin/bash -c 'touch /run/udev/snd-hda-intel-powersave; \
+        [[ \$(cat /sys/class/power_supply/BAT0/status 2>/dev/null) != \"Discharging\" ]] && \
+        echo \$(cat /sys/module/snd_hda_intel/parameters/power_save) > /run/udev/snd-hda-intel-powersave && \
+        echo 0 > /sys/module/snd_hda_intel/parameters/power_save'"
+
+SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="0", TEST=="/sys/module/snd_hda_intel", \
+    RUN+="/usr/bin/bash -c 'echo \$(cat /run/udev/snd-hda-intel-powersave 2>/dev/null || echo 10) > /sys/module/snd_hda_intel/parameters/power_save'"
+
+SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", TEST=="/sys/module/snd_hda_intel", \
+    RUN+="/usr/bin/bash -c '[[ \$(cat /sys/module/snd_hda_intel/parameters/power_save) != 0 ]] && \
+        echo \$(cat /run/udev/snd-hda-intel-powersave 2>/dev/null || echo 10) > /sys/module/snd-hda-intel-powersave; \
+        echo 0 > /sys/module/snd_hda_intel/parameters/power_save'"
+EOF
+
+  cat <<'EOF' > /etc/udev/rules.d/99-cpu-dma-latency.rules
+DEVPATH=="/devices/virtual/misc/cpu_dma_latency", OWNER="root", GROUP="audio", MODE="0660"
+EOF
+}
+
+configure_tmpfiles() {
+  log "Configurando tmpfiles para tcmalloc"
+  cat <<'EOF' > /etc/tmpfiles.d/thp.conf
+# Improve performance for applications that use tcmalloc
+# https://github.com/google/tcmalloc/blob/master/docs/tuning.md#system-level-optimizations
+w! /sys/kernel/mm/transparent_hugepage/defrag - - - - defer+madvise
+EOF
+}
+
+configure_shader_booster() {
+  log "Aplicando variáveis de ambiente para caches de shader"
+  mkdir -p /etc/profile.d
+  cat <<'EOF' > /etc/profile.d/shader_cache.sh
+# enforce RADV vulkan implementation for AMD GPUs
+export AMD_VULKAN_ICD=RADV
+
+# increase shader cache size
+export MESA_SHADER_CACHE_MAX_SIZE=12G
+EOF
+}
+
+configure_disk_scheduler() {
+  log "Escrevendo regras de IO scheduling (somente como exemplo, comentadas)"
+  cat <<'EOF' > /etc/udev/rules.d/60-ioschedulers.rules
+# define o escalonador para NVMe
+#ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"
+# define o escalonador para SSD e eMMC
+#ACTION=="add|change", KERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"
+# define o escalonador para discos rotativos
+#ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
+EOF
+}
+
+# ----------------- Drivers -----------------
+install_nvidia_proprietary() {
+  log "Instalando drivers NVIDIA proprietários (nvidia-dkms)"
+  pacman -S --needed --noconfirm nvidia-dkms nvidia-utils nvidia-settings || warn "Falha ao instalar nvidia-dkms"
+  mkinitcpio -P || warn "mkinitcpio falhou"
+}
+
+install_nvidia_open() {
+  log "Instalando drivers NVIDIA open (nouveau) - geralmente já no kernel"
+  pacman -S --needed --noconfirm xf86-video-nouveau || warn "Falha ao instalar xf86-video-nouveau"
+}
+
+install_amd_drivers() {
+  log "Instalando drivers AMD mesa"
+  pacman -S --needed --noconfirm mesa lib32-mesa || warn "Falha ao instalar mesa"
+}
+
+install_intel_drivers() {
+  log "Instalando drivers Intel mesa"
+  pacman -S --needed --noconfirm mesa lib32-mesa || warn "Falha ao instalar mesa"
+}
+
+# ----------------- Pacotes -----------------
+install_base_packages() {
+  log "Instalando pacotes base (pacman)"
+  pacman -S --needed --noconfirm \
+    nano bitwarden fastfetch gdu keepassxc firefox mpv gstreamer gst-plugins-bad \
+    gst-plugins-good gst-plugins-base gst-libav gst-plugins-ugly ffmpeg base-devel \
+    gufw wine winetricks steam lutris libreoffice-still xorg mesa lib32-mesa xdg-user-dirs flameshot \
+    foliate speedtest-cli aria2 claws-mail freecad timeshift cmus bleachbit linux-lts-headers yt-dlp lm_sensors dhcp || warn "Falha em instalar alguns pacotes"
+}
+
+install_extra_packages() {
+  log "Instalando pacotes extras"
+  pacman -S --needed --noconfirm pacman-contrib archlinux-contrib curl fakeroot htmlq diffutils hicolor-icon-theme python python-pyqt6 qt6-svg glib2 xdg-utils || warn "Falha em instalar extras"
+}
+
+install_optional_packages() {
+  log "Tarefas opcionais (Ventoy exemplo)"
+  mkdir -p /tmp/Ventoy && cd /tmp/Ventoy
+  wget -q "https://sourceforge.net/projects/ventoy/files/v1.1.11/ventoy-1.1.11-linux.tar.gz/download" -O Ventoy.tar.gz || { warn "wget falhou"; return; }
+  tar -xzf Ventoy.tar.gz || warn "tar falhou"
+  cd - >/dev/null
+}
+
+enable_services() {
+  log "Habilitando serviços úteis"
+  systemctl enable --now paccache.timer || true
+  pacman -S --needed --noconfirm earlyoom || true
+  cat <<'EOF' > /etc/default/earlyoom
+EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gdm|sddm|Xorg|Xwayland|systemd)$'"
+EOF
+}
+
+cleanup_system() {
+  log "Removendo dependências órfãs"
+  orphans=$(pacman -Qdtq || true)
+  if [[ -n "$orphans" ]]; then
+    pacman -Rns --noconfirm -- $orphans || warn "Falha ao remover órfãos"
+  fi
+}
+
+aur_git_clone() {
+  log "Clonando alguns AUR helpers (em /tmp)"
+  cd /tmp
+  git clone https://aur.archlinux.org/yay-bin.git || warn "Não clonou yay"
+  git clone https://aur.archlinux.org/topgrade-bin.git || warn "Não clonou topgrade"
+}
+
+# ----------------- Interactive menu -----------------
+interactive_drivers() {
+  local gpu
+  gpu=$(detect_gpu)
+  log "GPU detectada: $gpu"
+  case "$gpu" in
+    nvidia)
+      echo "Opções para NVIDIA:"
+      PS3="Escolha uma opção: "
+      select opt in "Proprietário (recomendado)" "Open (nouveau)" "Cancelar"; do
+        case $REPLY in
+          1) install_nvidia_proprietary; break;;
+          2) install_nvidia_open; break;;
+          3) break;;
+          *) echo "Opção inválida";;
+        esac
+      done
+      ;;
+    amd)
+      echo "Instalando drivers AMD (mesa)"
+      install_amd_drivers
+      ;;
+    intel)
+      echo "Instalando drivers Intel (mesa)"
+      install_intel_drivers
+      ;;
+    *)
+      warn "Não consegui detectar GPU automaticamente. Você pode instalar drivers manualmente." ;;
+  esac
+}
+
+main_menu() {
+  PS3="Escolha uma ação: "
+  options=("Atualizar sistema" "Instalar drivers (detectar)" "Instalar pacotes base" "Configurar sistema (sysctl,journal,zram)" "Executar tudo (não recomendado sem revisão)" "Sair")
+  select opt in "${options[@]}"; do
+    case $REPLY in
+      1) update_system; install_microcode; configure_grub; break;;
+      2) interactive_drivers; break;;
+      3) install_base_packages; break;;
+      4) configure_sysctl; configure_journal; configure_zram; configure_swapfile; break;;
+      5)
+        log "Executando rotina completa (review antes de rodar em produção)"
+        update_system
+        install_microcode
+        configure_grub
+        configure_udev_rules
+        configure_tmpfiles
+        configure_keyboard
+        configure_disk_scheduler
+        configure_shader_booster
+        configure_cpu_power
+        interactive_drivers
+        configure_flatpak || true
+        configure_bashrc
+        install_base_packages
+        install_extra_packages
+        install_optional_packages
+        aur_git_clone
+        enable_services
+        cleanup_system
+        break
+        ;;
+      6) log "Saindo"; exit 0;;
+      *) echo "Opção inválida";;
+    esac
+  done
+}
+
+# ----------------- Entrypoint -----------------
+main() {
+  required_root
+
+  if ! check_internet; then
+    warn "Continuando sem internet (algumas ações podem falhar)"
+  fi
+
+  # Se passado --auto executa rotina completa sem menu
+  if [[ "${1:-}" == "--auto" ]]; then
+    log "Modo automático"
+    update_system
+    install_microcode
+    configure_grub
+    configure_udev_rules
+    configure_tmpfiles
+    configure_keyboard
+    configure_disk_scheduler
+    configure_shader_booster
+    configure_cpu_power
+    interactive_drivers
+    configure_flatpak || true
+    configure_bashrc
+    install_base_packages
+    install_extra_packages
+    install_optional_packages
+    aur_git_clone
+    enable_services
+    cleanup_system
+    log "Feito"
+    exit 0
+  fi
+
+  main_menu
+}
+
+main "$@"
+
+
+# ----------------- Missing functions fixed -----------------
+configure_cpu_power() {
+  log "Configuração de CPU power placeholder"
+  return 0
+}
+
+configure_flatpak() {
+  log "Configurando Flatpak"
+  if ! command_exists flatpak; then
+    pacman -S --needed --noconfirm flatpak || {
+      warn "Falha ao instalar flatpak"
+      return 1
+    }
+  fi
+
+  if ! flatpak remote-list | grep -q flathub; then
+    flatpak remote-add --if-not-exists flathub \
+      https://flathub.org/repo/flathub.flatpakrepo || warn "Falha ao adicionar flathub"
+  fi
+}
