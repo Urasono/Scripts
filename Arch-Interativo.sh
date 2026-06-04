@@ -33,7 +33,7 @@ check_internet() {
 
 confirm() {
   local prompt="$1"
-  local default=${2:-n}
+#  local default=${2:-n}
   local ans
   read -r -p "$prompt [y/N]: " ans || return 1
   case "$ans" in
@@ -63,13 +63,13 @@ detect_gpu() {
   fi
 
   # Try kernel drivers for drm
-  if [[ -d /sys/class/drm ]]; then
-    if ls /sys/class/drm/card* 2>/dev/null | xargs -r -n1 basename | grep -q "card0"; then
-      if grep -qi nvidia /proc/modules 2>/dev/null; then printf '%s\n' "nvidia"; return; fi
-    fi
-  fi
+  if [[ -e /sys/class/drm/card0 ]] &&
+   grep -qi nvidia /proc/modules 2>/dev/null; then
+    printf '%s\n' "nvidia"
+    return
+fi
 
-  printf '%s\n' "unknown"
+printf '%s\n' "unknown"
 }
 
 # ----------------- System actions -----------------
@@ -265,33 +265,45 @@ EOF
 # ----------------- Drivers -----------------
 install_nvidia_proprietary() {
   log "Instalando drivers NVIDIA proprietários (nvidia-dkms)"
-  pacman -S --needed --noconfirm nvidia-dkms nvidia-utils nvidia-settings || warn "Falha ao instalar nvidia-dkms"
-  mkinitcpio -P || warn "mkinitcpio falhou"
+  pacman -S --needed --noconfirm nvidia-dkms nvidia-utils nvidia-settings lib32-nvidia-utils || warn "Falha ao instalar nvidia-dkms"
+
+  cat <<'EOF' > /etc/modprobe.d/nvidia.conf
+options nvidia_drm modeset=1
+EOF
+
+  cat <<'EOF' > /etc/mkinitcpio.conf
+MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
+
+ mkinitcpio -P || warn "mkinitcpio falhou"
 }
 
 install_nvidia_open() {
   log "Instalando drivers NVIDIA open (nouveau) - geralmente já no kernel"
   pacman -S --needed --noconfirm xf86-video-nouveau || warn "Falha ao instalar xf86-video-nouveau"
+
+  cat <<'EOF' > /etc/modprobe.d/nvidia.conf
+options nvidia_drm modeset=1
+EOF
 }
 
 install_amd_drivers() {
   log "Instalando drivers AMD mesa"
-  pacman -S --needed --noconfirm mesa lib32-mesa || warn "Falha ao instalar mesa"
+  pacman -S --needed --noconfirm mesa vulkan-radeon lib32-vulkan-radeon lib32-mesa || warn "Falha ao instalar mesa"
 }
 
 install_intel_drivers() {
   log "Instalando drivers Intel mesa"
-  pacman -S --needed --noconfirm mesa lib32-mesa || warn "Falha ao instalar mesa"
+  pacman -S --needed --noconfirm mesa vulkan-intel lib32-vulkan-intel lib32-mesa || warn "Falha ao instalar mesa"
 }
 
 # ----------------- Pacotes -----------------
 install_base_packages() {
   log "Instalando pacotes base (pacman)"
   pacman -S --needed --noconfirm \
-    nano bitwarden fastfetch gdu keepassxc firefox mpv gstreamer gst-plugins-bad \
+    nano linux-firmware bitwarden fastfetch keepassxc firefox mpv gstreamer gst-plugins-bad \
     gst-plugins-good gst-plugins-base gst-libav gst-plugins-ugly ffmpeg base-devel \
-    gufw wine winetricks steam lutris libreoffice-still xorg mesa lib32-mesa xdg-user-dirs flameshot \
-    foliate speedtest-cli aria2 claws-mail freecad timeshift cmus bleachbit linux-lts-headers yt-dlp lm_sensors dhcp || warn "Falha em instalar alguns pacotes"
+    gufw fwupd wine winetricks steam lutris libreoffice-still protonup-qt xorg mesa lib32-mesa xdg-user-dirs flameshot \
+    foliate speedtest-cli aria2 claws-mail freecad timeshift cmus bleachbit linux-headers linux-lts-headers yt-dlp lm_sensors dhcp || warn "Falha em instalar alguns pacotes"
 }
 
 install_extra_packages() {
@@ -311,6 +323,8 @@ enable_services() {
   log "Habilitando serviços úteis"
   systemctl enable --now paccache.timer || true
   pacman -S --needed --noconfirm earlyoom || true
+  systemctl enable --now fwupd.service || true
+
   cat <<'EOF' > /etc/default/earlyoom
 EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gdm|sddm|Xorg|Xwayland|systemd)$'"
 EOF
@@ -342,7 +356,7 @@ interactive_drivers() {
     nvidia)
       printf '%s\n' "Opções para NVIDIA:"
       PS3="Escolha uma opção: "
-      select opt in "Proprietário (recomendado)" "Open (nouveau)" "Cancelar"; do
+      select _ in opt in "Proprietário (recomendado)" "Open (nouveau)" "Cancelar"; do
         case $REPLY in
           1) install_nvidia_proprietary; break;;
           2) install_nvidia_open; break;;
@@ -367,7 +381,7 @@ interactive_drivers() {
 main_menu() {
   PS3="Escolha uma ação: "
   options=("Atualizar sistema" "Instalar drivers (detectar)" "Instalar pacotes base" "Configurar sistema (sysctl,journal,zram)" "Executar tudo (não recomendado sem revisão)" "Sair")
-  select opt in "${options[@]}"; do
+  select _ in opt in "${options[@]}"; do
     case $REPLY in
       1) update_system; install_microcode; configure_grub; break;;
       2) interactive_drivers; break;;
