@@ -50,7 +50,7 @@ while true; do
     tempfile=$(mktemp)
     youtube_dl_log=$(mktemp)
 
-query="ytsearch10:$search"
+query="ytsearch5:$search"
 
 # Executar yt-dlp
 if ! yt-dlp -j "$query" >"$tempfile" 2>"$youtube_dl_log"; then
@@ -98,3 +98,4 @@ while true; do
         fi
     done
 done
+
