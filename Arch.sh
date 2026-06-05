@@ -314,8 +314,9 @@ aur_git_clone() {
   cd /tmp || return
   git clone https://aur.archlinux.org/yay-bin.git || warn "Não clonou yay"
   git clone https://aur.archlinux.org/topgrade-bin.git || warn "Não clonou topgrade"
+}
 
-# ----------------- Missing functions fixed ----
+# ----------------- Functions-------------------
 configure_cpu_power() {
   log "Configuração de CPU power placeholder"
   return 0
@@ -331,14 +332,15 @@ configure_flatpak() {
   fi
 
   if ! flatpak remote-list | grep -q flathub; then
-    flatpak remote-add --if-not-exists flathub \ https://flathub.org/repo/flathub.flatpakrepo || warn "Falha ao adicionar flathub"
+    flatpak remote-add --if-not-exists flathub \
+    https://flathub.org/repo/flathub.flatpakrepo || warn "Falha ao adicionar flathub"
   fi
 }
 
   required_root
   command_exists
   check_internet
-  confirm
+  confirm "$@"
   update_system
   install_microcode
   configure_grub
@@ -364,5 +366,3 @@ configure_flatpak() {
   aur_git_clone
   configure_cpu_power
   configure_flatpak
-  
-main "$@"
