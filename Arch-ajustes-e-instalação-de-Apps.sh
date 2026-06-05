@@ -5,10 +5,6 @@
 #Autor: Urasono
 #Verificado por meio do shellcheck (shellcheck -x "script")
 #Versão: 1.0
-#-------------------------------------------------------------
-
-set -euo pipefail
-IFS=$'\n\t'
 
 check_internet() {
     ping -c 1 archlinux.org &>/dev/null || {
