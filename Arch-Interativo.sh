@@ -4,10 +4,6 @@
 #Descrição: Ajustes no Arch linux e instalação de aplicativos (interativo)
 #Autor: Urasono (modificado)
 #Versão: 1.1
-#-------------------------------------------------------------
-
-set -euo pipefail
-IFS=$'\n\t'
 
 # ----------------- Helpers -----------------
 log() { printf '\033[1;32m[INFO]\033[0m %s\n' "$1"; }
