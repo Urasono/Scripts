@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 #-------------------------------------------------------------
-#Nome: Arch Ajustes e instalação de apps (interativo)
-#Descrição: Ajustes no Arch linux e instalação de aplicativos (interativo)
-#Autor: Urasono (modificado)
+#Nome: Arch Ajustes e instalação de apps
+#Descrição: Ajustes no Arch linux e instalação de aplicativos
+#Autor: Urasono
 #Versão: 1.1
+#-----------------------------------------------
+set -euo pipefail
+IFS=$'\n\t'
 
 # ----------------- Helpers -----------------
 log() { printf '\033[1;32m[INFO]\033[0m %s\n' "$1"; }
@@ -36,36 +39,6 @@ confirm() {
     [Yy]*) return 0 ;;
     *) return 1 ;;
   esac
-}
-
-# ----------------- Hardware detection -----------------
-# Detecta GPU principal e retorna: "nvidia", "amd", "intel", or "unknown"
-detect_gpu() {
-  local pci
-  if command_exists lspci; then
-    pci=$(lspci -nnk | grep -E "VGA|3D" -i || true)
-  else
-    pci=""
-  fi
-
-  if grep -qi nvidia <<< "$pci"; then
-    printf '%s\n' "nvidia"; return
-  fi
-  if grep -Eqi "amd|advanced micro devices" <<< "$pci"; then
-    printf '%s\n' "amd"; return
-  fi
-  if grep -Eqi "intel" <<< "$pci"; then
-    printf '%s\n' "intel"; return
-  fi
-
-  # Try kernel drivers for drm
-  if [[ -e /sys/class/drm/card0 ]] &&
-   grep -qi nvidia /proc/modules 2>/dev/null; then
-    printf '%s\n' "nvidia"
-    return
-fi
-
-printf '%s\n' "unknown"
 }
 
 # ----------------- System actions -----------------
@@ -119,7 +92,7 @@ EOF
 }
 
 configure_zram() {
-  log "Configurando zram (zram-generator)"
+  log "Configurando zram"
   pacman -S --needed --noconfirm zram-generator || { warn "Não foi possível instalar zram-generator"; return; }
   cat <<'EOF' > /etc/systemd/zram-generator.conf
 [zram0]
@@ -155,7 +128,7 @@ configure_keyboard() {
 
 configure_bashrc() {
   log "Atualizando ~/.bashrc (sobrescreve o arquivo do usuário atual)"
-  cat <<'EOF' > ~/.bashrc
+  cat <<'EOF' >> ~/.bashrc
 [[ $- != *i* ]] && return
 alias ls="ls --color=auto"
 alias l="ls -l"
@@ -212,7 +185,7 @@ configure_shader_booster() {
   local gpu_vendor
   gpu_vendor="$(lspci | grep -Ei 'vga|3d|display' || true)"
 
-  cat <<'EOF' > /etc/profile.d/shader_cache.sh
+  cat <<'EOF' >> /etc/profile.d/shader_cache.sh
 # Shader cache global
 export MESA_SHADER_CACHE_MAX_SIZE=12G
 export MESA_SHADER_CACHE_DISABLE=false
@@ -244,6 +217,7 @@ EOF
   fi
 
   chmod +x /etc/profile.d/shader_cache.sh
+./etc/profile.d/shader_cache.sh
 }
 
 configure_disk_scheduler() {
@@ -259,7 +233,7 @@ EOF
 }
 
 # ----------------- Drivers -----------------
-install_nvidia_proprietary() {
+#install_nvidia_proprietary() {
   log "Instalando drivers NVIDIA proprietários (nvidia-dkms)"
   pacman -S --needed --noconfirm nvidia-dkms nvidia-utils nvidia-settings lib32-nvidia-utils || warn "Falha ao instalar nvidia-dkms"
 
@@ -271,16 +245,16 @@ EOF
 MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
 
  mkinitcpio -P || warn "mkinitcpio falhou"
-}
+#}
 
-install_nvidia_open() {
+#install_nvidia_open() {
   log "Instalando drivers NVIDIA open (nouveau) - geralmente já no kernel"
   pacman -S --needed --noconfirm xf86-video-nouveau || warn "Falha ao instalar xf86-video-nouveau"
 
   cat <<'EOF' > /etc/modprobe.d/nvidia.conf
 options nvidia_drm modeset=1
 EOF
-}
+#}
 
 install_amd_drivers() {
   log "Instalando drivers AMD mesa"
@@ -340,112 +314,6 @@ aur_git_clone() {
   cd /tmp || return
   git clone https://aur.archlinux.org/yay-bin.git || warn "Não clonou yay"
   git clone https://aur.archlinux.org/topgrade-bin.git || warn "Não clonou topgrade"
-}
-
-# ----------------- Interactive menu ----------
-
-interactive_drivers() {
-  local gpu
-  gpu=$(detect_gpu)
-  log "GPU detectada: $gpu"
-  case "$gpu" in
-    nvidia)
-      printf '%s\n' "Opções para NVIDIA:"
-      PS3="Escolha uma opção: "
-      select _ in opt in "Proprietário (recomendado)" "Open (nouveau)" "Cancelar"; do
-        case $REPLY in
-          1) install_nvidia_proprietary; break;;
-          2) install_nvidia_open; break;;
-          3) break;;
-          *) printf '%s\n' "Opção inválida";;
-        esac
-      done
-      ;;
-    amd)
-      printf '%s\n' "Instalando drivers AMD (mesa)"
-      install_amd_drivers
-      ;;
-    intel)
-      printf '%s\n' "Instalando drivers Intel (mesa)"
-      install_intel_drivers
-      ;;
-    *)
-      warn "Não consegui detectar GPU automaticamente. Você pode instalar drivers manualmente." ;;
-  esac
-}
-
-main_menu() {
-  PS3="Escolha uma ação: "
-  options=("Atualizar sistema" "Instalar drivers (detectar)" "Instalar pacotes base" "Configurar sistema (sysctl,journal,zram)" "Executar tudo (não recomendado sem revisão)" "Sair")
-  select _ in opt in "${options[@]}"; do
-    case $REPLY in
-      1) update_system; install_microcode; configure_grub; break;;
-      2) interactive_drivers; break;;
-      3) install_base_packages; break;;
-      4) configure_sysctl; configure_journal; configure_zram; configure_swapfile; break;;
-      5)
-        log "Executando rotina completa (review antes de rodar em produção)"
-        update_system
-        install_microcode
-        configure_grub
-        configure_udev_rules
-        configure_tmpfiles
-        configure_keyboard
-        configure_disk_scheduler
-        configure_shader_booster
-        configure_cpu_power
-        interactive_drivers
-        configure_flatpak || true
-        configure_bashrc
-        install_base_packages
-        install_extra_packages
-        install_optional_packages
-        aur_git_clone
-        enable_services
-        cleanup_system
-        break
-        ;;
-      6) log "Saindo"; exit 0;;
-      *) printf '%s\n' "Opção inválida";;
-    esac
-  done
-}
-
-# ----------------- Entrypoint -----------------
-main() {
-  required_root
-
-  if ! check_internet; then
-    warn "Continuando sem internet (algumas ações podem falhar)"
-  fi
-
-  # Se passado --auto executa rotina completa sem menu
-  if [[ "${1:-}" == "--auto" ]]; then
-    log "Modo automático"
-    update_system
-    install_microcode
-    configure_grub
-    configure_udev_rules
-    configure_tmpfiles
-    configure_keyboard
-    configure_disk_scheduler
-    configure_shader_booster
-    configure_cpu_power
-    interactive_drivers
-    configure_flatpak || true
-    configure_bashrc
-    install_base_packages
-    install_extra_packages
-    install_optional_packages
-    aur_git_clone
-    enable_services
-    cleanup_system
-    log "Feito"
-    exit 0
-  fi
-
-  main_menu
-}
 
 # ----------------- Missing functions fixed ----
 configure_cpu_power() {
@@ -467,4 +335,34 @@ configure_flatpak() {
   fi
 }
 
+  required_root
+  command_exists
+  check_internet
+  confirm
+  update_system
+  install_microcode
+  configure_grub
+  configure_sysctl
+  configure_journal
+  configure_zram
+  configure_swapfile
+  configure_keyboard
+  configure_bashrc
+  configure_udev_rules
+  configure_tmpfiles
+  configure_shader_booster
+  configure_disk_scheduler
+  install_nvidia_proprietary
+  install_nvidia_open
+  install_amd_drivers
+  install_intel_drivers
+  install_base_packages
+  install_extra_packages
+  install_optional_packages
+  enable_services
+  cleanup_system
+  aur_git_clone
+  configure_cpu_power
+  configure_flatpak
+  
 main "$@"
