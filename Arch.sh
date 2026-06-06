@@ -127,7 +127,7 @@ configure_keyboard() {
 }
 
 configure_bashrc() {
-  log "Atualizando ~/.bashrc (sobrescreve o arquivo do usuário atual)"
+  log "Atualizando ~/.bashrc"
   cat <<'EOF' >> ~/.bashrc
 [[ $- != *i* ]] && return
 alias ls="ls --color=auto"
@@ -270,10 +270,7 @@ install_intel_drivers() {
 install_base_packages() {
   log "Instalando pacotes base (pacman)"
   pacman -S --needed --noconfirm \
-    nano linux-firmware bitwarden fastfetch keepassxc firefox mpv gstreamer gst-plugins-bad \
-    gst-plugins-good gst-plugins-base gst-libav gst-plugins-ugly ffmpeg base-devel \
-    gufw fwupd wine winetricks steam lutris libreoffice-still protonup-qt xorg mesa lib32-mesa xdg-user-dirs flameshot \
-    foliate speedtest-cli aria2 claws-mail freecad timeshift cmus bleachbit linux-headers linux-lts-headers yt-dlp lm_sensors dhcp || warn "Falha em instalar alguns pacotes"
+nano linux-firmware bitwarden fastfetch keepassxc firefox mpv gstreamer gst-plugins-bad gst-plugins-good gst-plugins-base gst-libav gst-plugins-ugly ffmpeg base-devel gufw fwupd wine winetricks steam lutris libreoffice-still protonup-qt xorg mesa lib32-mesa xdg-user-dirs flameshot foliate speedtest-cli aria2 claws-mail freecad timeshift cmus bleachbit linux-headers linux-lts-headers yt-dlp lm_sensors dhcp || warn "Falha em instalar alguns pacotes"
 }
 
 install_extra_packages() {
@@ -283,10 +280,10 @@ install_extra_packages() {
 
 install_optional_packages() {
   log "Tarefas opcionais (Ventoy exemplo)"
-  mkdir -p /tmp/Ventoy && cd /tmp/Ventoy || return
+  mkdir -p ~/Ventoy && cd ~/Ventoy || return
   wget -q --show-progress "https://sourceforge.net/projects/ventoy/files/v1.1.11/ventoy-1.1.11-linux.tar.gz/download" -O Ventoy.tar.gz || { warn "wget falhou"; return; }
   tar -xzf Ventoy.tar.gz || warn "tar falhou"
-  cd - >/dev/null
+  cd --
 }
 
 enable_services() {
@@ -311,9 +308,11 @@ cleanup_system() {
 
 aur_git_clone() {
   log "Clonando alguns AUR helpers (em /tmp)"
-  cd /tmp || return
+  mkdir -p ~/aur
+  cd /aur || return
   git clone https://aur.archlinux.org/yay-bin.git || warn "Não clonou yay"
   git clone https://aur.archlinux.org/topgrade-bin.git || warn "Não clonou topgrade"
+  cd ~/
 }
 
 # ----------------- Functions-------------------
@@ -333,7 +332,7 @@ configure_flatpak() {
 
   if ! flatpak remote-list | grep -q flathub; then
     flatpak remote-add --if-not-exists flathub \
-    https://flathub.org/repo/flathub.flatpakrepo || warn "Falha ao adicionar flathub"
+https://flathub.org/repo/flathub.flatpakrepo || warn "Falha ao adicionar flathub"
   fi
 }
 
