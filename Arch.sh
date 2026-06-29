@@ -30,17 +30,6 @@ check_internet() {
   return 0
 }
 
-confirm() {
-  local prompt="$1"
-#  local default=${2:-n}
-  local ans
-  read -r -p "$prompt [y/N]: " ans || return 1
-  case "$ans" in
-    [Yy]*) return 0 ;;
-    *) return 1 ;;
-  esac
-}
-
 # ----------------- System actions -----------------
 update_system() {
   log "Atualizando sistema"
@@ -234,7 +223,7 @@ EOF
 
 # ----------------- Drivers -----------------
 #install_nvidia_proprietary() {
-  log "Instalando drivers NVIDIA proprietários (nvidia-dkms)"
+  log "Instalando drivers NVIDIA proprietários"
   pacman -S --needed --noconfirm nvidia-dkms nvidia-utils nvidia-settings lib32-nvidia-utils || warn "Falha ao instalar nvidia-dkms"
 
   cat <<'EOF' > /etc/modprobe.d/nvidia.conf
@@ -248,7 +237,7 @@ MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
 #}
 
 #install_nvidia_open() {
-  log "Instalando drivers NVIDIA open (nouveau) - geralmente já no kernel"
+  log "Instalando drivers NVIDIA open (nouveau)"
   pacman -S --needed --noconfirm xf86-video-nouveau || warn "Falha ao instalar xf86-video-nouveau"
 
   cat <<'EOF' > /etc/modprobe.d/nvidia.conf
@@ -336,10 +325,10 @@ https://flathub.org/repo/flathub.flatpakrepo || warn "Falha ao adicionar flathub
   fi
 }
 
+main () {
   required_root
   command_exists
   check_internet
-  confirm "$@"
   update_system
   install_microcode
   configure_grub
@@ -365,3 +354,6 @@ https://flathub.org/repo/flathub.flatpakrepo || warn "Falha ao adicionar flathub
   aur_git_clone
   configure_cpu_power
   configure_flatpak
+}
+
+main "$@"
