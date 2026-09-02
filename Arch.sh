@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 #-------------------------------------------------------------
 #Nome: Arch Ajustes e instalação de apps
 #Descrição: Ajustes no Arch linux e instalação de aplicativos
@@ -20,16 +20,6 @@ required_root() {
   fi
 }
 
-command_exists() { command -v "$1" &>/dev/null; }
-
-check_internet() {
-  if ! ping -c 1 archlinux.org &>/dev/null; then
-    error "Sem conexão com internet"
-    return 1
-  fi
-  return 0
-}
-
 # ----------------- System actions -----------------
 update_system() {
   log "Atualizando sistema"
@@ -39,20 +29,7 @@ update_system() {
 
 install_microcode() {
   log "Instalando microcode se aplicável"
-  if grep -qi amd /proc/cpuinfo 2>/dev/null; then
-    pacman -S --needed --noconfirm amd-ucode || warn "Falha ao instalar amd-ucode"
-  elif grep -qi intel /proc/cpuinfo 2>/dev/null; then
-    pacman -S --needed --noconfirm intel-ucode || warn "Falha ao instalar intel-ucode"
-  fi
-}
-
-configure_grub() {
-  if command_exists grub-mkconfig; then
-    log "Atualizando GRUB..."
-    grub-mkconfig -o /boot/grub/grub.cfg || warn "Falha ao gerar grub.cfg"
-  else
-    warn "GRUB não instalado, ignorando configuração..."
-  fi
+  pacman -S --needed --noconfirm intel-ucode || warn "Falha ao instalar intel-ucode"
 }
 
 configure_sysctl() {
@@ -90,23 +67,6 @@ compression-algorithm = zstd
 EOF
   # Enable generator-managed unit (systemd will create the setup unit)
   systemctl daemon-reload || true
-}
-
-configure_swapfile() {
-  log "Criando swapfile em /swapfile se não existir"
-  if [[ ! -f /swapfile ]]; then
-    if command_exists fallocate; then
-      fallocate -l 4G /swapfile || { warn "fallocate falhou, usando dd"; dd if=/dev/zero of=/swapfile bs=1M count=4096; }
-    else
-      dd if=/dev/zero of=/swapfile bs=1M count=4096
-    fi
-    chmod 600 /swapfile
-    mkswap /swapfile
-    swapon /swapfile
-  else
-    warn "swapfile já existe"
-  fi
-  grep -Fq '/swapfile' /etc/fstab || echo '/swapfile none swap defaults 0 0' >> /etc/fstab
 }
 
 configure_keyboard() {
@@ -168,45 +128,14 @@ EOF
 
 configure_shader_booster() {
   log "Aplicando variáveis de ambiente para cache de shader"
+  
+  cat <<'EOF' >> /etc/.profile
 
-  mkdir -p /etc/profile.d
+#NVIDIA
 
-  local gpu_vendor
-  gpu_vendor="$(lspci | grep -Ei 'vga|3d|display' || true)"
-
-  cat <<'EOF' >> /etc/profile.d/shader_cache.sh
-# Shader cache global
-export MESA_SHADER_CACHE_MAX_SIZE=12G
-export MESA_SHADER_CACHE_DISABLE=false
-export mesa_glthread=true
+increase Nvidia shader cache size to 8GB
+export __GL_SHADER_DISK_CACHE_SIZE=8000000000
 EOF
-
-  if printf '%s\n' "$gpu_vendor" | grep -qi "amd"; then
-    cat <<'EOF' >> /etc/profile.d/shader_cache.sh
-
-# AMD RADV
-export AMD_VULKAN_ICD=RADV
-export RADV_PERFTEST=gpl
-EOF
-
-  elif printf '%s\n' "$gpu_vendor" | grep -qi "intel"; then
-    cat <<'EOF' >> /etc/profile.d/shader_cache.sh
-
-# Intel Mesa
-export mesa_glthread=true
-EOF
-
-  elif printf '%s\n' "$gpu_vendor" | grep -qi "nvidia"; then
-    cat <<'EOF' >> /etc/profile.d/shader_cache.sh
-
-# NVIDIA shader cache
-export __GL_SHADER_DISK_CACHE=1
-export __GL_SHADER_DISK_CACHE_SIZE=12000000000
-EOF
-  fi
-
-  chmod +x /etc/profile.d/shader_cache.sh
-./etc/profile.d/shader_cache.sh
 }
 
 configure_disk_scheduler() {
@@ -222,7 +151,7 @@ EOF
 }
 
 # ----------------- Drivers -----------------
-#install_nvidia_proprietary() {
+install_nvidia_proprietary() {
   log "Instalando drivers NVIDIA proprietários"
   pacman -S --needed --noconfirm nvidia-dkms nvidia-utils nvidia-settings lib32-nvidia-utils || warn "Falha ao instalar nvidia-dkms"
 
@@ -230,11 +159,13 @@ EOF
 options nvidia_drm modeset=1
 EOF
 
-  cat <<'EOF' > /etc/mkinitcpio.conf
+   cat <<'EOF' > /etc/mkinitcpio.conf
 MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
 
- mkinitcpio -P || warn "mkinitcpio falhou"
-#}
+mkinitcpio -P || warn "mkinitcpio falhou"
+#
+EOF
+}
 
 #install_nvidia_open() {
   log "Instalando drivers NVIDIA open (nouveau)"
@@ -243,9 +174,9 @@ MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
   cat <<'EOF' > /etc/modprobe.d/nvidia.conf
 options nvidia_drm modeset=1
 EOF
-#}
+}
 
-install_amd_drivers() {
+#install_amd_drivers() {
   log "Instalando drivers AMD mesa"
   pacman -S --needed --noconfirm mesa vulkan-radeon lib32-vulkan-radeon lib32-mesa || warn "Falha ao instalar mesa"
 }
@@ -275,12 +206,13 @@ install_optional_packages() {
   cd --
 }
 
-enable_services() {
+Paccache() {
   log "Habilitando serviços úteis"
   systemctl enable --now paccache.timer || true
   pacman -S --needed --noconfirm earlyoom || true
   systemctl enable --now fwupd.service || true
-
+}
+Earlyoom() {
   cat <<'EOF' > /etc/default/earlyoom
 EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gdm|sddm|Xorg|Xwayland|systemd)$'"
 EOF
@@ -295,19 +227,8 @@ cleanup_system() {
   fi
 }
 
-aur_git_clone() {
-  log "Clonando alguns AUR helpers (em /tmp)"
-  mkdir -p ~/aur
-  cd /aur || return
-  git clone https://aur.archlinux.org/yay-bin.git || warn "Não clonou yay"
-  git clone https://aur.archlinux.org/topgrade-bin.git || warn "Não clonou topgrade"
-  cd ~/
-}
-
 # ----------------- Functions-------------------
 configure_cpu_power() {
-  log "Configuração de CPU power placeholder"
-  return 0
 }
 
 configure_flatpak() {
@@ -327,15 +248,11 @@ https://flathub.org/repo/flathub.flatpakrepo || warn "Falha ao adicionar flathub
 
 main () {
   required_root
-  command_exists
-  check_internet
   update_system
   install_microcode
-  configure_grub
   configure_sysctl
   configure_journal
   configure_zram
-  configure_swapfile
   configure_keyboard
   configure_bashrc
   configure_udev_rules
@@ -349,9 +266,9 @@ main () {
   install_base_packages
   install_extra_packages
   install_optional_packages
-  enable_services
+  Paccache
+  Earlyoom
   cleanup_system
-  aur_git_clone
   configure_cpu_power
   configure_flatpak
 }
