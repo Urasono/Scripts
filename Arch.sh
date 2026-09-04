@@ -204,11 +204,8 @@ EOF
 # ----------------- Functions-------------------
 #configurar_o_flatpak
   log "Configurando Flatpak"
-    pacman -S --needed --noconfirm flatpak || {
-      warn "Falha ao instalar flatpak"
-      return 1  
-  fi
-
+    pacman -S --needed --noconfirm flatpak
+    
   if ! flatpak remote-list | grep -q flathub; then
     flatpak remote-add --if-not-exists flathub \
 https://flathub.org/repo/flathub.flatpakrepo || warn "Falha ao adicionar flathub"
