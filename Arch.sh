@@ -205,7 +205,6 @@ EOF
 # ----------------- Functions-------------------
 #configurar_o_flatpak
   log "Configurando Flatpak"
-  if ! command_exists flatpak; then
     pacman -S --needed --noconfirm flatpak || {
       warn "Falha ao instalar flatpak"
       return 1  
