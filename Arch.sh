@@ -197,7 +197,6 @@ EOF
 
 #Limpeza_do_sistema
   log "Removendo dependências órfãs"
- local orphans
  orphans=$(pacman -Qdtq || true)
   if [[ -n "$orphans" ]]; then
     pacman -Rns --noconfirm -- "${orphans}" || warn "Falha ao remover órfãos"
