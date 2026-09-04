@@ -163,10 +163,9 @@ EOF
 #  log "Instalando drivers AMD mesa"
 # pacman -S --needed --noconfirm mesa vulkan-radeon lib32-vulkan-radeon lib32-mesa || warn "Falha ao instalar mesa"
 
-install_intel_drivers() {
+#install_drivers_da_Intel
   log "Instalando drivers Intel mesa"
   pacman -S --needed --noconfirm mesa vulkan-intel lib32-vulkan-intel lib32-mesa || warn "Falha ao instalar mesa"
-}
 
 # ----------------- Pacotes -----------------
 #instalação_pacotes_básicos
@@ -178,50 +177,41 @@ nano linux-firmware bitwarden fastfetch keepassxc firefox mpv gstreamer gst-plug
   log "Instalando pacotes extras"
   pacman -S --needed --noconfirm pacman-contrib archlinux-contrib curl fakeroot htmlq diffutils hicolor-icon-theme python python-pyqt6 qt6-svg glib2 xdg-utils || warn "Falha em instalar extras"
 
-install_optional_packages() {
+#install_pacotes_opcionais
   log "Tarefas opcionais (Ventoy exemplo)"
   mkdir -p ~/Ventoy && cd ~/Ventoy || return
   wget -q --show-progress "https://sourceforge.net/projects/ventoy/files/v1.1.11/ventoy-1.1.11-linux.tar.gz/download" -O Ventoy.tar.gz || { warn "wget falhou"; return; }
   tar -xzf Ventoy.tar.gz || warn "tar falhou"
   cd --
-}
 
-Paccache() {
+#Paccache
   log "Habilitando serviços úteis"
   systemctl enable --now paccache.timer || true
   pacman -S --needed --noconfirm earlyoom || true
   systemctl enable --now fwupd.service || true
-}
-Earlyoom() {
+
+#Earlyoom
   cat <<'EOF' > /etc/default/earlyoom
 EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gdm|sddm|Xorg|Xwayland|systemd)$'"
 EOF
-}
 
-cleanup_system() {
+#Limpeza_do_sistema
   log "Removendo dependências órfãs"
  local orphans
  orphans=$(pacman -Qdtq || true)
   if [[ -n "$orphans" ]]; then
     pacman -Rns --noconfirm -- "${orphans}" || warn "Falha ao remover órfãos"
   fi
-}
-
 # ----------------- Functions-------------------
-configure_cpu_power() {
-}
-
-configure_flatpak() {
+#configurar_o_flatpak
   log "Configurando Flatpak"
   if ! command_exists flatpak; then
     pacman -S --needed --noconfirm flatpak || {
       warn "Falha ao instalar flatpak"
-      return 1
-    }
+      return 1  
   fi
 
   if ! flatpak remote-list | grep -q flathub; then
     flatpak remote-add --if-not-exists flathub \
 https://flathub.org/repo/flathub.flatpakrepo || warn "Falha ao adicionar flathub"
   fi
-}
