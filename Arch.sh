@@ -225,31 +225,3 @@ configure_flatpak() {
 https://flathub.org/repo/flathub.flatpakrepo || warn "Falha ao adicionar flathub"
   fi
 }
-
-main () {
-  required_root
-  update_system
-  install_microcode
-  configure_sysctl
-  configure_journal
-  configure_zram
-  configure_bashrc
-  configure_udev_rules
-  configure_tmpfiles
-  configure_shader_booster
-  configure_disk_scheduler
-  install_nvidia_proprietary
-  install_nvidia_open
-  install_amd_drivers
-  install_intel_drivers
-  install_base_packages
-  install_extra_packages
-  install_optional_packages
-  Paccache
-  Earlyoom
-  cleanup_system
-  configure_cpu_power
-  configure_flatpak
-}
-
-main "$@"
