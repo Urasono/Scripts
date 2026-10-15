@@ -14,11 +14,10 @@ warn() { printf '\033[1;33m[WARN]\033[0m %s\n' "$1"; }
 error() { printf '\033[1;31m[ERRO]\033[0m %s\n' "$1" >&2; }
 
 #required_root
-  if [[ $EUID -ne 0 ]]; then
+  if [[ $EUID -eq 0 ]]; then
     error "Você precisa ser root!"
     exit 1
   fi
-
 # ----------------- System actions -----------------
 
 #Atualizar o sistema
